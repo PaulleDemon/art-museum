@@ -1,0 +1,11 @@
+Model Information:
+* title:	Art Gallery
+* source:	https://sketchfab.com/3d-models/art-gallery-4f619683576d484dae9d4bf2a04091ee
+* author:	ALLrounder18 (https://sketchfab.com/abdulrehman18sep)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Art Gallery" (https://sketchfab.com/3d-models/art-gallery-4f619683576d484dae9d4bf2a04091ee) by ALLrounder18 (https://sketchfab.com/abdulrehman18sep) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
