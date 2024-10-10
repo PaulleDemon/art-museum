@@ -155,18 +155,6 @@ export default class FirstPersonCamera {
         this.camera_.lookAt(closest);
     }
 
-    updateHeadBob_(timeElapsedS) {
-        if (this.headBobActive_) {
-            const wavelength = Math.PI;
-            const nextStep = 1 + Math.floor(((this.headBobTimer_ + 0.000001) * 10) / wavelength);
-            const nextStepTime = nextStep * wavelength / 10;
-            this.headBobTimer_ = Math.min(this.headBobTimer_ + timeElapsedS, nextStepTime);
-
-            if (this.headBobTimer_ == nextStepTime) {
-                this.headBobActive_ = false;
-            }
-        }
-    }
 
     updateTranslation_(timeElapsedS) {
         const forwardVelocity = (this.input_.key(KEYS.w) ? 1 : 0) + (this.input_.key(KEYS.s) ? -1 : 0)
@@ -186,9 +174,6 @@ export default class FirstPersonCamera {
         this.translation_.add(forward);
         this.translation_.add(left);
 
-        // if (forwardVelocity != 0 || strafeVelocity != 0) {
-        //     this.headBobActive_ = true;
-        // }
     }
 
     updateRotation_(timeElapsedS) {

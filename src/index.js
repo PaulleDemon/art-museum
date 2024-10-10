@@ -37,6 +37,7 @@ function init() {
         // controls = new SimpleFPControls(camera, museum, container);
         // scene.add(controls.getObject());
         controls = new FirstPersonCamera(camera, gltf.scene.children, container)
+        controls.translation_.set(-3, 10, 0);  // Manually set camera position
     });
 
     // Handle window resize
