@@ -1,12 +1,10 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-import { PointerLockControls } from 'three/addons/controls/PointerLockControls.js';
+import SimpleFPControls from './controls.js'; // Adjust the import based on your file structure
+import FirstPersonCamera from './controller.js';
 
 let camera, scene, renderer, controls;
-let moveForward = false, moveBackward = false, moveLeft = false, moveRight = false, canJump = false;
 let prevTime = performance.now();
-const velocity = new THREE.Vector3();
-const direction = new THREE.Vector3();
 
 function init() {
 
@@ -27,22 +25,6 @@ function init() {
     renderer.setSize(window.innerWidth, window.innerHeight);
     container.appendChild(renderer.domElement);
 
-    // PointerLockControls
-    controls = new PointerLockControls(camera, container);
-
-    // Event to lock pointer on click
-    container.addEventListener('click', () => {
-        controls.lock();
-    });
-
-    // Lock change event listener (optional)
-    controls.addEventListener('lock', function () {
-        console.log('Pointer lock enabled');
-    });
-
-    controls.addEventListener('unlock', function () {
-        console.log('Pointer lock disabled');
-    });
 
     // GLTFLoader to load the model
     const loader = new GLTFLoader();
@@ -51,58 +33,11 @@ function init() {
         museum.scale.set(0.5, 0.5, 0.5);
         scene.add(gltf.scene);
         animate();
+         // Use SimpleFPControls for first-person movement
+        // controls = new SimpleFPControls(camera, museum, container);
+        // scene.add(controls.getObject());
+        controls = new FirstPersonCamera(camera, gltf.scene.children, container)
     });
-
-    // Key down and key up events
-    const onKeyDown = function (event) {
-        switch (event.code) {
-            case 'ArrowUp':
-            case 'KeyW':
-                moveForward = true;
-                break;
-            case 'ArrowLeft':
-            case 'KeyA':
-                moveLeft = true;
-                break;
-            case 'ArrowDown':
-            case 'KeyS':
-                moveBackward = true;
-                break;
-            case 'ArrowRight':
-            case 'KeyD':
-                moveRight = true;
-                break;
-            case 'Space':
-                if (canJump) velocity.y += 350;
-                canJump = false;
-                break;
-        }
-    };
-
-    const onKeyUp = function (event) {
-        switch (event.code) {
-            case 'ArrowUp':
-            case 'KeyW':
-                moveForward = false;
-                break;
-            case 'ArrowLeft':
-            case 'KeyA':
-                moveLeft = false;
-                break;
-            case 'ArrowDown':
-            case 'KeyS':
-                moveBackward = false;
-                break;
-            case 'ArrowRight':
-            case 'KeyD':
-                moveRight = false;
-                break;
-        }
-    };
-
-    // Add event listeners for key press
-    document.addEventListener('keydown', onKeyDown);
-    document.addEventListener('keyup', onKeyUp);
 
     // Handle window resize
     window.addEventListener('resize', onWindowResize, false);
@@ -118,19 +53,7 @@ function animate() {
     const time = performance.now();
     const delta = (time - prevTime) / 1000;
 
-    velocity.x -= velocity.x * 10.0 * delta;
-    velocity.z -= velocity.z * 10.0 * delta;
-
-    direction.z = Number(moveForward) - Number(moveBackward);
-    direction.x = Number(moveRight) - Number(moveLeft);
-    direction.normalize(); // Ensure consistent movement in all directions
-
-    if (moveForward || moveBackward) velocity.z -= direction.z * 400.0 * delta;
-    if (moveLeft || moveRight) velocity.x -= direction.x * 400.0 * delta;
-
-    // Update camera position based on velocity
-    controls.getObject().position.x += velocity.x * delta;
-    controls.getObject().position.z += velocity.z * delta;
+    controls?.update(delta); // Update controls with the delta time
 
     renderer.render(scene, camera);
 
