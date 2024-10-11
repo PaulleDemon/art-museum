@@ -15,6 +15,7 @@ import { GUI } from 'three/addons/libs/lil-gui.module.min.js';
 import { CSS3DRenderer, CSS3DObject } from 'three/addons/renderers/CSS3DRenderer.js';
 import { CSS2DRenderer, CSS2DObject } from 'three/addons/renderers/CSS2DRenderer.js';
 import FirstPersonPlayer from './control';
+import AnnotationDiv from "./annotationDiv";
 
 
 const clock = new THREE.Clock();
@@ -93,13 +94,17 @@ function createAnnotationDiv(text){
     annotationDiv.textContent = `${text}`;
     // annotationDiv.style.zIndex = 1000;
 
+    annotationDiv.addEventListener("click", () => {
+        console.log("clicked")
+    })
+
+
     return annotationDiv
 }
 
 
 const loader = new GLTFLoader().setPath('/assets/');
-const annotations = [];
-const raycaster = new THREE.Raycaster();
+
 
 loader.load('art_gallery2/scene.gltf', (gltf) => {
 
@@ -122,12 +127,14 @@ loader.load('art_gallery2/scene.gltf', (gltf) => {
             const box = new THREE.Box3().setFromObject(child);
             const center = new THREE.Vector3();
             box.getCenter(center);  // Get the center of the bounding box in world coordinates
-
-            const annotationDiv = createAnnotationDiv(count)
-            const label = new CSS2DObject(annotationDiv)
+            
+            // const annotationDiv = createAnnotationDiv(count)
+            const annotationDiv = new AnnotationDiv(count)
+            const label = new CSS2DObject(annotationDiv.getElement())
             // center.copy(label.position)
             label.position.set(center.x, center.y, center.z)
             
+
             // scene.add(label);
             // Create a CSS2DObject and attach it to the corresponding 3D object
             // const label = new CSS2DObject(annotationDiv);
@@ -155,10 +162,6 @@ loader.load('art_gallery2/scene.gltf', (gltf) => {
     //     }
     // });
 
-    // const helper = new OctreeHelper(worldOctree);
-    // helper.visible = false;
-    // scene.add(helper);
-
     onWindowResize();
 
     fpView = new FirstPersonPlayer(camera, scene, container)
@@ -167,15 +170,6 @@ loader.load('art_gallery2/scene.gltf', (gltf) => {
     // worldOctree.fromGraphNode(gltf.scene);
 
     fpView.updatePlayer(0.01);
-
-
-    // const gui = new GUI({ width: 200 });
-    // gui.add({ debug: false }, 'debug')
-    //     .onChange(function (value) {
-
-    //         helper.visible = value;
-
-    //     });
 
 });
 
@@ -229,7 +223,7 @@ function animate() {
         fpView?.update(deltaTime)
     }
 
-    updateAnnotations()
+    // updateAnnotations()
     // checkAnnotationVisibility();
     cssRenderer.render(scene, camera);
     css3dRenderer.render(scene, camera);

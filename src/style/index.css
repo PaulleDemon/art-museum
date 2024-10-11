@@ -1,3 +1,61 @@
+.flex{
+    display: flex;
+}
+
+.flex-col{
+    flex-direction: column;
+}
+
+input, textarea{
+    padding: 4px;
+    outline: none;
+    border-radius: 5px;
+    border: 1px solid #495057;
+    height: 30px;
+    background-color: transparent;
+    color: #fff;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+input:focus, input:focus-within, textarea:focus, textarea:focus-within{
+    border-color: #80bdff;
+    border: 1px solid #80bdff;
+    outline: 0;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    
+}
+
+textarea{
+    resize: vertical;
+    max-height: 250px;
+    width: 100%;
+
+}
+
+
+.upload-modal{
+    z-index: 100;
+    background-color: #000;
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    width: 500px;
+    height: 500px;
+    border-radius: 10px;
+    transform: translate(-50%, -50%);
+    padding: 10px;
+}
+
+.upload-container{
+    height: 100px;
+}
+
+.upload-details{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    overflow: hidden;
+}
 
 .annotation{
     background-color: #0000009a;
@@ -5,4 +63,45 @@
     border-radius: 50%;
     padding: 5px;
     color: #fff;
+    width: 10px;
+    height: 10px;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
+.expanded-annotation{
+    position: absolute;
+    left: 30px;
+    padding: 0px;
+    width: 0px;
+    height: 0px;
+    min-width: 0px;
+    overflow: hidden;
+    color: #fff;
+    border-radius: 5px;
+    background-color: #000000b1;
+    transition: width 0.4s, min-width 0.4s, height 0.4s;
+}
+
+.annotation:hover .expanded-annotation {
+    width: 150px;
+    height: 200px;
+    padding: 5px;
+    min-width: 100px;
+}
+
+.art-title{
+    font-size: 14px;
+}
+
+.art-description{
+    font-size: 12px;
+    text-align: left;
+}
+
+.twitter-acc{
+    color: #1577c7;
 }

@@ -24,6 +24,7 @@ export default class FirstPersonPlayer{
 
 
         this.playerOnFloor = false;
+        this.mousePress = false;
         // this.mouseTime = 0;
 
         this.keyStates = {};
@@ -41,24 +42,33 @@ export default class FirstPersonPlayer{
 
         this.container.addEventListener('mousedown', () => {
 
+            this.mousePress = true
             // document.body.requestPointerLock();
         
-            console.log("Pointer lock element", document.pointerLockElement)
+            // console.log("Pointer lock element", document.pointerLockElement)
         
-            if (document.pointerLockElement !== container)
-                container.requestPointerLock();
+            // if (document.pointerLockElement !== container)
+            //     container.requestPointerLock();
         
         });
+
+        this.container.addEventListener("mouseup", () => {
+            this.mousePress = false;
+        })
 
         this.container.addEventListener('mousemove', (event) => {
 
             if (document.pointerLockElement === this.container) {
         
-                this.camera.rotation.y -= event.movementX / 500;
-                this.camera.rotation.x -= event.movementY / 500;
+                // this.camera.rotation.y -= event.movementX / 500;
+                // this.camera.rotation.x -= event.movementY / 500;
         
             }
-        
+
+            if (this.mousePress){
+                this.camera.rotation.y -= event.movementX / 500;
+                this.camera.rotation.x -= event.movementY / 500;
+            }
         });
 
         this.playerCollisions = this.playerCollisions.bind(this)
