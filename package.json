@@ -1,5 +1,7 @@
 {
   "dependencies": {
+    "css-loader": "^7.1.2",
+    "style-loader": "^4.0.0",
     "three": "^0.169.0"
   },
   "name": "art-museum",
