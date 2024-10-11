@@ -10,10 +10,11 @@ input, textarea{
     padding: 4px;
     outline: none;
     border-radius: 5px;
-    border: 1px solid #495057;
+    border: 1px solid #2c2c2c;
     height: 30px;
     background-color: transparent;
     color: #fff;
+    width: 100%;
     transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 }
 
@@ -27,34 +28,74 @@ input:focus, input:focus-within, textarea:focus, textarea:focus-within{
 
 textarea{
     resize: vertical;
-    max-height: 250px;
-    width: 100%;
+    max-height: 100px;
+    /* width: 100%; */
 
 }
 
+
+.btn{
+    border: none;
+    cursor: pointer;
+    padding: 10px 15px;
+    max-width: max-content;
+    border-radius: 5px;
+}
 
 .upload-modal{
     z-index: 100;
     background-color: #000;
     position: fixed;
+    color: #fff;
     left: 50%;
     top: 50%;
     width: 500px;
-    height: 500px;
+    height: 550px;
     border-radius: 10px;
     transform: translate(-50%, -50%);
     padding: 10px;
 }
 
 .upload-container{
-    height: 100px;
+    height: 100%;
+    display: flex;
+    max-height: 250px;
+    border: 1px dashed #c1c0c0;
+    border-radius: 10px;
+    font-size: 20px;
+    padding: 5px;
+    align-items: center;
+    justify-content: center;
+    color: #c2c2c2;
+    cursor: pointer;
+}
+
+.upload-container.dragover {
+    border-color: #80bdff;
+    background-color: rgba(0, 123, 255, 0.1);
+}
+
+.upload-preview {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: cover;
+    display: none;
 }
 
 .upload-details{
     display: flex;
     flex-direction: column;
     gap: 10px;
+    padding: 5px;
     overflow: hidden;
+    align-items: center;
+    margin-top: 5px;
+}
+
+.upload-modal-close{
+    text-align: right;
+    font-size: 25px;
+    cursor: pointer;
 }
 
 .annotation{

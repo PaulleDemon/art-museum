@@ -4,7 +4,7 @@
 
 export default class AnnotationDiv{
 
-    constructor(text, id){
+    constructor(text, id, onAnnotationClick, onAnnotationDblClick){
 
         this.__id = id
 
@@ -15,19 +15,29 @@ export default class AnnotationDiv{
         this.expandedDiv = document.createElement('div');
         this.expandedDiv.className = 'expanded-annotation';
 
-        this.annotationDiv.appendChild(this.expandedDiv)
+        this.annotationDiv.appendChild(this.expandedDiv);
 
-        this.annotationDiv.addEventListener("click", (event) => {
+        this.onAnnotationClick = onAnnotationClick;
+        this.onAnnotationDblClick = onAnnotationDblClick;
 
-            if (!this.expandedDiv.contains(event.target)){
-                console.log("clicked")
+        this.annotationDiv.addEventListener("click", this.clickEvent.bind(this))
 
-            }
-
-        })
+        this.annotationDiv.addEventListener("dblclick", this.dblClickEvent.bind(this))
     
         
     
+    }
+
+    clickEvent(event){
+        if (!this.expandedDiv.contains(event.target)){
+            this.onAnnotationClick({event: event, id: this.__id})
+        }
+    }
+
+    dblClickEvent(event){
+        if (!this.expandedDiv.contains(event.target)){
+            this.onAnnotationDblClick({event: event, id: this.__id})
+        }
     }
 
     annotationDetails(description, title, artist){

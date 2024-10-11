@@ -17,11 +17,18 @@ import { CSS2DRenderer, CSS2DObject } from 'three/addons/renderers/CSS2DRenderer
 import FirstPersonPlayer from './control';
 import AnnotationDiv from "./annotationDiv";
 
+import { closeUploadModal, displayUploadModal, initUploadModal } from "./utils";
 
 const clock = new THREE.Clock();
 const scene = new THREE.Scene();
 
 let model = null;
+
+const STEPS_PER_FRAME = 5;
+let fpView;
+let gallery_mesh;
+
+initUploadModal()
 
 // scene.background = new THREE.Color(0x88ccee);
 // scene.fog = new THREE.Fog(0x88ccee, 0, 50);
@@ -66,12 +73,6 @@ container.appendChild(renderer.domElement);
 // container.appendChild(stats.domElement);
 
 
-const STEPS_PER_FRAME = 5;
-
-let fpView;
-
-let gallery_mesh;
-
 window.addEventListener('resize', onWindowResize);
 
 function onWindowResize() {
@@ -85,22 +86,6 @@ function onWindowResize() {
 
 }
 
-
-function createAnnotationDiv(text){
-
-    const annotationDiv = document.createElement('div');
-    annotationDiv.className = 'annotation';
-    // annotationDiv.style.backgroundColor = '#00';
-    annotationDiv.textContent = `${text}`;
-    // annotationDiv.style.zIndex = 1000;
-
-    annotationDiv.addEventListener("click", () => {
-        console.log("clicked")
-    })
-
-
-    return annotationDiv
-}
 
 
 const loader = new GLTFLoader().setPath('/assets/');
@@ -129,17 +114,32 @@ loader.load('art_gallery2/scene.gltf', (gltf) => {
             box.getCenter(center);  // Get the center of the bounding box in world coordinates
             
             // const annotationDiv = createAnnotationDiv(count)
-            const annotationDiv = new AnnotationDiv(count)
+            const annotationDiv = new AnnotationDiv(count, count)
             const label = new CSS2DObject(annotationDiv.getElement())
             // center.copy(label.position)
             label.position.set(center.x, center.y, center.z)
-            
 
-            // scene.add(label);
-            // Create a CSS2DObject and attach it to the corresponding 3D object
-            // const label = new CSS2DObject(annotationDiv);
-            // label.position.set(center.x, center.y, center.z);  
-            // console.log('Found:', center, label);
+            annotationDiv.onAnnotationClick = ({event, id}) => {
+                const targetPosition = label.position;
+
+                // Vector from camera to the target position
+                const direction = new THREE.Vector3();
+                direction.subVectors(targetPosition, camera.position).normalize();
+
+                // Set the desired distance from the target
+                const distance = 2; // Adjust this to set how close you want the camera to get
+
+                // Move the camera closer to the target
+                camera.position.addScaledVector(direction, distance);
+
+                // Ensure the camera looks at the target
+                camera.lookAt(targetPosition);
+            }
+
+            annotationDiv.onAnnotationDblClick = ({event, id}) => {
+                displayUploadModal()
+            }
+
             scene.add(label);
             // annotations.push({ label, center, object: child }); 
         }

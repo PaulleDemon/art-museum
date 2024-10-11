@@ -131,6 +131,7 @@ export default class FirstPersonPlayer{
         this.playerCollisions();
     
         this.camera.position.copy(this.playerCollider.end);
+        // this.camera.position.lerp(this.playerCollider.end, deltaTime*0.5);
     
     }
     

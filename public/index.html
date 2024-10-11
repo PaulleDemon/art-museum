@@ -9,20 +9,27 @@
         canvas { display: block; }
         #model-container { width: 100vw; height: 100vh; } 
     </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css" integrity="sha512-dPXYcDub/aeb08c63jRq/k6GaKccl256JQy/AnOq7CAnEZ9FzSL9wSbcZkMp4R26vBsMLFYH4kQ67/bbV8XaCQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="index.css">
 </head>
 <body>
 
     <!-- <div>hello</div> -->
-    <div class="upload-modal">
-        
-        <div class="upload-container">
-
+    <div class="upload-modal" id="upload-modal">
+        <div id="upload-close" class="upload-modal-close">
+            <i class="bi bi-x"></i>
+        </div>
+        <div class="upload-container" id="upload-container">
+            
+            <div id="upload-text">Upload image here</div>
+            <img src="" class="upload-preview" id="upload-preview">
+            <input type="file" id="upload-input" accept=".png, .jpg, .jpeg" style="display: none;">
         </div>
         <div class="upload-details">
             <input type="text" name="" id="" placeholder="title" maxlength="30">
             <textarea name="" id="" placeholder="description"></textarea>
             <input type="text" name="" id="" placeholder="twitter handle" maxlength="30">
+            <button type="submit" class="btn">Upload</button>
         </div>
     </div>
     <div id="model-container"></div>
