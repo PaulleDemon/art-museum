@@ -1,9 +1,32 @@
+import { uploadItem } from "./services";
+
 const uploadModal = document.getElementById("upload-modal")
 
 const uploadContainer = document.getElementById('upload-container');
 const uploadInput = document.getElementById('upload-input');
 const uploadText = document.getElementById('upload-text');
 const uploadPreview = document.getElementById('upload-preview');
+
+const uploadSubmit = document.getElementById("upload-btn");
+
+const toastAlert = document.getElementById("toast-alert");
+
+toastAlert.style.display = "none"
+
+let file = null;
+
+
+export function toastMessage(message){
+
+    toastAlert.style.display = "flex";
+    toastAlert.textContent = message;
+
+    setTimeout(() => {
+        toastAlert.style.display = "none"
+    }, 3000)
+
+}
+
 
 export function closeUploadModal() {
     uploadModal.style.display = "none";
@@ -20,6 +43,10 @@ export function displayUploadModal() {
 
 export function initUploadModal() {
     
+    const uploadTitle = document.getElementById("upload-title")
+    const uploadDescription = document.getElementById("upload-description")
+    const uploadHandle = document.getElementById("upload-handle")
+
     const closeBtn = document.getElementById("upload-close")
 
     closeBtn.addEventListener("click", closeUploadModal)
@@ -29,9 +56,18 @@ export function initUploadModal() {
     });
 
     uploadInput.addEventListener('change', (event) => {
-        const file = event.target.files[0];
+        file = event.target.files[0];
         handleFile(file);
     });
+
+    uploadSubmit.addEventListener("click", () => {
+
+        if (!file){
+            return toastMessage("Select an image.")
+        }
+
+        uploadItem(file, uploadTitle.value, uploadDescription.value, uploadHandle.value, null, 0, 0)
+    })
 
     // Handle drag-and-drop
     uploadContainer.addEventListener('dragover', (event) => {
@@ -47,9 +83,11 @@ export function initUploadModal() {
         event.preventDefault();
         uploadContainer.classList.remove('dragover');
 
-        const file = event.dataTransfer.files[0];
+        file = event.dataTransfer.files[0];
         handleFile(file);
     });
+
+
 
     uploadModal.style.display = "none";
 

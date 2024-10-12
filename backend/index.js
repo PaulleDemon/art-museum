@@ -2,22 +2,22 @@
 const express = require('express')
 require('dotenv').config()
 
+const cors = require('cors')
 const { createClient } = require('@supabase/supabase-js')
 const multer = require('multer')
 const bodyParser = require('body-parser')
+const { isNumeric } = require('./utils')
 
 
 const app = express()
 const port = 3000
 
+let corsOptions = {
+	origin : ['http://localhost:8080'],
+ }
+
 // Parse JSON requests
-app.use(express.json(), bodyParser.json())
-
-// Define a couple of endpoints
-app.get('/list', (req, res) => {
-	res.status(200).json({ message: 'Hello, world!' })
-})
-
+app.use(express.json(), bodyParser.json(), cors(corsOptions))
 
 // Supabase configuration
 const supabaseUrl = process.env.SUPABASE_URL
@@ -42,26 +42,66 @@ const upload = multer({ storage })
 const validateData = (data) => {
 	const errors = []
 
-	if (!data.ip_address || data.ip_address.length > 45) {
-		errors.push('IP address is required and must be at most 45 characters.')
-	}
+	// if (!data.ip_address || data.ip_address.length > 45) {
+	// 	errors.push('IP address is required and must be at most 45 characters.')
+	// }
 	if (!data.title || data.title.length > 40) {
 		errors.push('Title is required and must be at most 40 characters.')
 	}
 	if (!data.description || data.description.length > 200) {
 		errors.push('Description is required and must be at most 200 characters.')
 	}
-	if (data.name && data.name.length > 30) {
-		errors.push('Name must be at most 30 characters.')
+
+	if (data.name.length < 3 || data.name.length > 30) {
+		errors.push('Handle must be atleast 3 character and most 30 characters.')
 	}
 
-	if (!Object.values(Museum).includes(data.museum)){
+	if (data.price && isNumeric(data.price.length)) {
+		errors.push('Price has to be a number')
+	}
+
+	if (data.price > 2000){
+		errors.push('Please keep the price below 1000')
+	}
+
+	console.log("Museum: ", Object.values(Museum).includes(data.museum), typeof data.museum)
+
+
+	if (!Object.values(Museum).includes(parseInt(data.museum))){
 		errors.push('Museum must be 0, 1 or 2')
 
 	}
 
 	return errors
 }
+
+// Define a couple of endpoints
+app.get('/list/:museum', async (req, res) => {
+	
+	const museum = req.params.museum
+
+	try {
+		
+		const { data, error: checkError } = await supabase
+					.from('items')
+					.select('*')
+					.eq('museum', museum)
+					.single() // Get a single entry if it exists
+		
+		if (checkError) {
+			throw checkError
+		}
+			
+		return res.status(200).json({ success: true, data, message: 'Items retrieved successfully' })
+		
+
+	} catch (error) {
+		return res.status(500).json({ success: false, message: 'List error', error: err.message })
+	}
+
+
+})
+
 
 const uploadToPinata = async (file) => {
 
@@ -99,7 +139,9 @@ const uploadToPinata = async (file) => {
 app.post('/upload', upload.single('file'), async (req, res) => {
 	const ipAddress = req.headers['x-forwarded-for'] || req.ip
 
-	const { imgId, title, description, price, name, museum } = req.body
+	const { img_id, title, description, price, name, museum } = req.body
+
+	console.log("Museum: ", museum)
 
 	// Validate input data
 	const errors = validateData(req.body)
@@ -143,7 +185,7 @@ app.post('/upload', upload.single('file'), async (req, res) => {
 		const { data: existingEntries, error: checkError } = await supabase
 				.from('items')
 				.select('*')
-				.eq('imgId', imgId)
+				.eq('img_id', img_id)
 				.single() // Get a single entry if it exists
 
 		if (checkError && checkError.code !== 'PGRST100') { // Ignore not found error
@@ -154,14 +196,15 @@ app.post('/upload', upload.single('file'), async (req, res) => {
 			const { data, error: updateError } = await supabase
 														.from('items')
 														.update({
-														ip_address: ipAddress,
-														title,
-														description,
-														price,
-														name,
-														url: fileUrl
+															ip_address: ipAddress,
+															title,
+															description,
+															price,
+															name,
+															url: fileUrl,
+															museum: parseInt(museum)
 														})
-														.eq('imgId', imgId)
+														.eq('img_id', img_id)
 
 			if (updateError) {
 				throw updateError
@@ -175,7 +218,7 @@ app.post('/upload', upload.single('file'), async (req, res) => {
 			const { data, error } = await supabase
 											.from('items')
 											.insert([{ ip_address: ipAddress, title, description, 
-													price, name, url: fileUrl, museum }])
+													price, name, url: fileUrl, museum: parseInt(museum) }])
 
 			if (error) {
 				throw error
