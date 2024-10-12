@@ -6,9 +6,9 @@ import { toastMessage } from "./utils"
 
 
 export async function getMuseumList(museumId) {
-
+    
     return await fetch(`${process.env.BACKEND_URL}/${museumId}`, {
-        method: 'GET',
+        method: 'GET'
     })
 }
 
