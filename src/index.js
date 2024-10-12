@@ -3,14 +3,8 @@ import "./style/index.css"
 
 import * as THREE from 'three';
 
-import Stats from 'three/addons/libs/stats.module.js';
-
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
-import { Octree } from 'three/addons/math/Octree.js';
-import { OctreeHelper } from 'three/addons/helpers/OctreeHelper.js';
-
-import { GUI } from 'three/addons/libs/lil-gui.module.min.js';
 
 import { CSS3DRenderer, CSS3DObject } from 'three/addons/renderers/CSS3DRenderer.js';
 import { CSS2DRenderer, CSS2DObject } from 'three/addons/renderers/CSS2DRenderer.js';
@@ -27,6 +21,7 @@ let model = null;
 const STEPS_PER_FRAME = 5;
 let fpView;
 let gallery_mesh;
+let annotations = []
 
 initUploadModal()
 
@@ -67,10 +62,7 @@ renderer.shadowMap.type = THREE.VSMShadowMap;
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
 container.appendChild(renderer.domElement);
 
-// const stats = new Stats();
-// stats.domElement.style.position = 'absolute';
-// stats.domElement.style.top = '0px';
-// container.appendChild(stats.domElement);
+
 
 
 window.addEventListener('resize', onWindowResize);
@@ -86,6 +78,22 @@ function onWindowResize() {
 
 }
 
+container.addEventListener("keydown", (e) => {
+
+    if (e.key === "Shift"){
+        hideAnnotations()
+    }
+
+})
+
+container.addEventListener("keyup", (e) => {
+
+    if (e.key === "Shift"){
+        showAnnotations()
+    }
+
+})
+
 
 
 const loader = new GLTFLoader().setPath('/assets/');
@@ -97,6 +105,7 @@ loader.load('art_gallery2/scene.gltf', (gltf) => {
     scene.add(gltf.scene);
 
     let count = 0;
+    annotations = []
     gltf.scene.traverse((child) => {
 
         if (child.name === "art_gallery") {
@@ -118,6 +127,8 @@ loader.load('art_gallery2/scene.gltf', (gltf) => {
             const label = new CSS2DObject(annotationDiv.getElement())
             // center.copy(label.position)
             label.position.set(center.x, center.y, center.z)
+
+            annotations.push(label)
 
             annotationDiv.onAnnotationClick = ({event, id}) => {
                 const targetPosition = label.position;
@@ -172,6 +183,19 @@ loader.load('art_gallery2/scene.gltf', (gltf) => {
     fpView.updatePlayer(0.01);
 
 });
+
+
+function hideAnnotations(){
+    annotations.forEach(lbl => {
+        lbl.element.style.opacity = "0"
+    })
+}
+
+function showAnnotations(){
+    annotations.forEach(lbl => {
+        lbl.element.style.opacity = "100"
+    })
+}
 
 
 function updateAnnotations() {
