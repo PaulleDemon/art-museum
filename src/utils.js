@@ -1,3 +1,4 @@
+import Cropper from "cropperjs";
 import { uploadItem } from "./services";
 
 const uploadModal = document.getElementById("upload-modal")
@@ -9,7 +10,12 @@ const uploadPreview = document.getElementById('upload-preview');
 
 const uploadSubmit = document.getElementById("upload-btn");
 
+const uploadCropper = document.getElementById("upload-cropper")
+
 const toastAlert = document.getElementById("toast-alert");
+
+let cropper;
+
 
 toastAlert.style.display = "none"
 
@@ -66,6 +72,7 @@ export function initUploadModal() {
             return toastMessage("Select an image.")
         }
 
+        cropper.destroy();
         uploadItem(file, uploadTitle.value, uploadDescription.value, uploadHandle.value, null, 0, 0)
     })
 
@@ -100,6 +107,22 @@ function handleFile(file) {
             uploadPreview.src = e.target.result;
             uploadPreview.style.display = 'block';
             uploadText.style.display = 'none'; // Hide the text once an image is uploaded
+
+            // Initialize Cropper.js
+            if (cropper) {
+                cropper.destroy(); // Destroy previous instance if exists
+            }
+
+            document.getElementById("upload-cropper-container").style.display = 'block'
+
+            cropper = new Cropper(uploadPreview, {
+                viewMode: 1,
+                aspectRatio: 16 / 9,
+                crop(event) {
+                    // Optional: Handle crop events
+                },
+            });
+
         };
         reader.readAsDataURL(file);
     } else {

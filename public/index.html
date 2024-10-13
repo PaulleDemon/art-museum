@@ -25,6 +25,7 @@
         <div class="upload-container" id="upload-container">
             
             <div id="upload-text">Upload image here</div>
+            
             <img src="" class="upload-preview" id="upload-preview">
             <input type="file" id="upload-input" accept=".png, .jpg, .jpeg" style="display: none;">
         </div>
@@ -35,6 +36,11 @@
             <button type="submit" id="upload-btn" class="btn">Upload</button>
         </div>
     </div>
+
+    <div id="upload-cropper-container" class="upload-cropper" style="display: none;">
+        <img src="" class="upload-preview" id="upload-preview">
+    </div>
+
     <div id="model-container"></div>
 
     <script src="https://cdn.jsdelivr.net/npm/three@0.160.1/build/three.min.js"></script>

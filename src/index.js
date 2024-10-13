@@ -5,7 +5,7 @@ import * as THREE from 'three';
 
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
-
+import { DecalGeometry } from 'three/addons/geometries/DecalGeometry.js';
 import { CSS3DRenderer, CSS3DObject } from 'three/addons/renderers/CSS3DRenderer.js';
 import { CSS2DRenderer, CSS2DObject } from 'three/addons/renderers/CSS2DRenderer.js';
 import FirstPersonPlayer from './control';
@@ -13,6 +13,7 @@ import AnnotationDiv from "./annotationDiv";
 
 import { closeUploadModal, displayUploadModal, initUploadModal } from "./utils";
 import { getMuseumList } from "./services";
+import ImageMaterial from "./imageTexture";
 
 const clock = new THREE.Clock();
 const scene = new THREE.Scene();
@@ -57,12 +58,10 @@ container.appendChild(css3dRenderer.domElement);
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setPixelRatio(window.devicePixelRatio);
 renderer.setSize(container.clientWidth, container.clientHeight);
-renderer.setAnimationLoop(animate);
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.VSMShadowMap;
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
 container.appendChild(renderer.domElement);
-
 
 console.log("Database: ", getMuseumList(0))
 
@@ -101,19 +100,190 @@ container.addEventListener("keyup", (e) => {
  * @param {THREE.Mesh} mesh 
  * @param {string} imgUrl 
  */
-function setImageToMesh(mesh, imgUrl){
+function setImageToMesh2(mesh, imgUrl){
 
-    console.log("Mesh: ", mesh)
+    
+    // mesh.updateMatrix()
+    // console.log("CSS3d: ", mesh.position, mesh.name, mesh.rotation, mesh.scale)
 
-    const material = new MeshStandardMaterial();
+    // Add it to the scene
+    // scene.add(css3DObject);
+    
 
     const textureLoader = new THREE.TextureLoader();
-    const texture = textureLoader.load(imgUrl);
-    material.map = texture;
+    const texture = textureLoader.load(imgUrl, (texture) => {
 
-    mesh.material = material;
-    mesh.material.needsUpdate = true;
+        texture.wrapS = THREE.RepeatWrapping;
+        texture.wrapT = THREE.RepeatWrapping;
+    
+        // Create a material with the texture
+        const material = new THREE.MeshBasicMaterial({ map: texture });
+    
+        // Create your mesh (e.g., a box)
+        // const geometry = new THREE.BoxGeometry(1, 1, 1); // Example geometry
+        // const mesh = new THREE.Mesh(geometry, material);
+        // scene.add(mesh);
+    
+        // Function to adjust texture to fit the mesh size
+        function adjustTextureToFitMesh(mesh, texture) {
+            // Compute the mesh size dynamically using the bounding box
+            const boundingBox = new THREE.Box3().setFromObject(mesh);
+            const size = boundingBox.getSize(new THREE.Vector3()); // Get size (width, height, depth)
+    
+            // Get the texture dimensions
+            const textureWidth = texture.image.width;   // Original texture width
+            const textureHeight = texture.image.height; // Original texture height
+    
+            // Calculate aspect ratios
+            const meshAspect = size.x / size.y;
+            const textureAspect = textureWidth / textureHeight;
+    
+            // Determine scaling for the texture
+            if (meshAspect > textureAspect) {
+                // Mesh is wider than texture
+                texture.repeat.set(size.x / textureWidth, size.x / textureWidth / textureAspect);
+            } else {
+                // Mesh is taller than texture
+                texture.repeat.set(size.y / textureHeight * textureAspect, size.y / textureHeight);
+            }
+    
+            // Center the texture if needed (optional)
+            // texture.offset.set(0, 0);
+            texture.offset.set(0.5 - (texture.repeat.x * 0.5), 0.5 - (texture.repeat.y * 0.5));
+        }
+    
+        // Initial adjustment of the texture
+        adjustTextureToFitMesh(mesh, texture);
+    
+
+        // const material = new THREE.MeshBasicMaterial({map: texture,  side: THREE.DoubleSide})
+
+        mesh.material = material;
+        // mesh.scale.x = texture.image.width
+        // mesh.scale.y = texture.image.height
+        mesh.material.needsUpdate = true
+        console.log("mesh: ", texture.image, );
+
+        // const textureWidth = texture.image.width;
+        // const textureHeight = texture.image.height;
+        // const aspectRatio = textureWidth / textureHeight;
+
+
+        // Adjust decal size based on aspect ratio
+        // let decalWidth, decalHeight;
+        // if (aspectRatio > 1) {
+        //     // Texture is wider than it is tall (landscape)
+        //     decalWidth = 1 * aspectRatio;  // Scale width by aspect ratio
+        //     decalHeight = 1;  // Keep height constant
+        // } else {
+        //     // Texture is taller than it is wide (portrait)
+        //     decalWidth = 1;  // Keep width constant
+        //     decalHeight = 1 / aspectRatio;  // Scale height inversely by aspect ratio
+        // }
+        // // Decal size, adjust the x and y values based on the aspect ratio
+        // const decalSize = new THREE.Vector3(decalWidth, 1, decalHeight);
+
+        // const decalPosition = new THREE.Vector3();
+        // mesh.getWorldPosition(decalPosition);
+
+        // // Create a rotation for the decal
+        // const decalRotation = new THREE.Quaternion();
+        // mesh.getWorldQuaternion(decalRotation);
+
+        // const box = new THREE.Box3().setFromObject(mesh);
+        // const center = new THREE.Vector3();
+        // box.getCenter(center);  // Get the center of the bounding box in world coordinates
+        
+
+
+        // // Create the decal geometry using the mesh's properties
+        // const decalGeometry = new DecalGeometry(mesh, center, decalRotation, decalSize);
+
+        // // Create a material for the decal
+        // const decalMaterial = new THREE.MeshPhongMaterial({
+        //     map: texture,
+        //     transparent: true,
+        //     depthTest: true,
+        //     polygonOffset: true,
+        //     polygonOffsetFactor: - 4,
+        //     depthWrite: false, // Ensure the decal shows correctly
+        // });
+
+
+
+        // // Create the decal mesh
+        // const decalMesh = new THREE.Mesh(decalGeometry, decalMaterial);
+        // decalMesh.renderOrder = 1;
+
+        // const helperGeometry = new THREE.SphereGeometry(0.1); // Adjust size as necessary
+        // const helperMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+        // const helperMesh = new THREE.Mesh(helperGeometry, helperMaterial);
+        // helperMesh.position.copy(center); // Position it similarly
+        // scene.add(helperMesh);
+
+        // scene.add(decalMesh);
+        // console.log("texture: ", texture, center, decalRotation)
+
+        // Add the decal to the scene
+        
+    });
+    
 }
+
+
+
+/**
+ * 
+ * @param {THREE.Mesh} mesh 
+ * @param {string} imgUrl 
+ */
+function setImageToMesh(mesh, imgUrl){
+
+    
+    // mesh.updateMatrix()
+    // console.log("CSS3d: ", mesh.position, mesh.name, mesh.rotation, mesh.scale)
+
+    // Add it to the scene
+    // scene.add(css3DObject);
+    
+
+    const textureLoader = new THREE.TextureLoader();
+    const texture = textureLoader.load(imgUrl, (texture) => {
+
+        // texture.wrapS = THREE.RepeatWrapping;
+        // texture.wrapT = THREE.RepeatWrapping;
+
+        texture.wrapS = THREE.ClampToEdgeWrapping; // Prevent horizontal mirroring
+        texture.wrapT = THREE.ClampToEdgeWrapping;
+
+        const imageBounds = new THREE.Vector2(texture.image.width, texture.image.height);
+    
+        // Set the imageBounds uniform for the material
+        ImageMaterial.uniforms.imageBounds.value.copy(imageBounds);
+        ImageMaterial.uniforms.map.value = texture;
+
+        // Create a material with the texture
+        const material = new THREE.MeshBasicMaterial({ map: texture });
+        
+    
+        // Initial adjustment of the texture
+        // adjustTextureToFitMesh(mesh, texture);
+    
+
+        // const material = new THREE.MeshBasicMaterial({map: texture,  side: THREE.DoubleSide})
+
+        mesh.material = ImageMaterial;
+        // mesh.scale.x = texture.image.width
+        // mesh.scale.y = texture.image.height
+        mesh.material.needsUpdate = true
+        console.log("mesh: ", texture.image, );
+
+        
+    });
+    
+}
+
+
 
 
 const loader = new GLTFLoader().setPath('/assets/');
@@ -287,5 +457,10 @@ function animate() {
     renderer.render(scene, camera);
 
     // stats.update();
+    requestAnimationFrame(animate)
+
 
 }
+// renderer.setAnimationLoop(animate);
+
+animate()

@@ -96,6 +96,14 @@ textarea{
     background-color: rgba(0, 123, 255, 0.1);
 }
 
+.upload-cropper{
+    background-color: red;
+    max-width: 100%;
+    max-height: 100%;
+    /* overflow: hidden; */
+    display: block;
+}
+
 .upload-preview {
     max-width: 100%;
     max-height: 100%;
