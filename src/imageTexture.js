@@ -55,6 +55,8 @@ function createImageMaterial(textureUrl) {
     // Load the texture and set it for the material
     const textureLoader = new THREE.TextureLoader();
     textureLoader.load(textureUrl, function (texture) {
+        // texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+        // texture.repeat.y = - 1;
         const imageBounds = new THREE.Vector2(texture.image.width, texture.image.height);
         ImageMaterial.uniforms.imageBounds.value.copy(imageBounds);
         ImageMaterial.uniforms.map.value = texture;

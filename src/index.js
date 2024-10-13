@@ -163,6 +163,9 @@ loader.load('art_gallery2/scene.gltf', (gltf) => {
             
             // annotationDiv.style.width = `50px`
 
+            child.material = new THREE.MeshBasicMaterial()
+
+
             const box = new THREE.Box3().setFromObject(child);
             const center = new THREE.Vector3();
             box.getCenter(center);  // Get the center of the bounding box in world coordinates
@@ -207,14 +210,15 @@ loader.load('art_gallery2/scene.gltf', (gltf) => {
 
     //     if (child.isMesh) {
 
-    //         child.castShadow = true;
-    //         child.receiveShadow = true;
 
-    //         if (child.material.map) {
+    //         // child.castShadow = true;
+    //         // child.receiveShadow = true;
 
-    //             child.material.map.anisotropy = 4;
+    //         // if (child.material.map) {
 
-    //         }
+    //         //     child.material.map.anisotropy = 4;
+
+    //         // }
 
     //     }
     // });

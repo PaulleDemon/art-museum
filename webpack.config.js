@@ -51,8 +51,8 @@ module.exports = {
             },
             {
                 test: /\.css$/i,
-                use: [
-                    MiniCssExtractPlugin.loader, // Extract CSS for production
+                use:  [
+                    isProduction ? MiniCssExtractPlugin.loader : 'style-loader', // Extract CSS for production
                     'css-loader',
                 ],
             },
