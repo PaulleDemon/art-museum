@@ -1,50 +1,60 @@
 const path = require('path');
 const { DefinePlugin } = require('webpack');
-
 const Dotenv = require('dotenv-webpack');
+const HtmlWebpackPlugin = require('html-webpack-plugin'); 
+const MiniCssExtractPlugin = require('mini-css-extract-plugin'); 
+const CopyWebpackPlugin = require('copy-webpack-plugin');
+const TerserWebpackPlugin = require('terser-webpack-plugin'); 
+const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
+
+const isProduction = process.env.NODE_ENV === 'production'; 
 
 module.exports = {
     entry: './src/index.js',
     output: {
-        filename: 'main.js',
+        filename: isProduction ? 'main.[contenthash].js' : 'main.js', // Use content hash for caching in production
         path: path.resolve(__dirname, 'dist'),
-        clean: true, // Clean the output directory before each build
+        clean: true, 
     },
-    mode: "development",
+    mode: isProduction ? 'production' : 'development', 
     plugins: [
         new Dotenv({
             path: `src/.env`,
-            systemvars: true, //Set to true if you would rather load all system variables as well (useful for CI purposes)
+            systemvars: true, 
+        }),
+        new HtmlWebpackPlugin({
+            template: 'public/index.html',
+            filename: 'index.html',
+        }),
+        new MiniCssExtractPlugin({
+            filename: isProduction ? '[name].[contenthash].css' : '[name].css', // Extracted CSS file name
+        }),
+        new CopyWebpackPlugin({
+            patterns: [
+                { from: 'public/assets', to: 'assets' }, // Copy public assets
+            ],
         }),
     ],
     module: {
         rules: [
             {
-                // following is an example of YOUR loader config
                 test: /\.(png|jpe?g|gif)(\?.*)?$/,
-                // here I decided to put all my gltf files under a folder named 'gltf'
-                // so I added and exclude rule to my existing loader
-                exclude: /gltf/, // only add this line
-                // (etc)
-                loader: 'url-loader',
-                options: {
-                    limit: 10000,
-                    name: 'img/[name].[hash:7].[ext]'
-                }
-            },
-            {
-                // here I match only IMAGE and BIN files under the gltf folder
-                test: /gltf.*\.(bin|png|jpe?g|gif)$/,
-                // or use url-loader if you would like to embed images in the source gltf
-                loader: 'file-loader',
-                options: {
-                    // output folder for bin and image files, configure as needed
-                    name: 'gltf/[name].[hash:7].[ext]'
-                }
+                type: 'asset', // Use Webpack 5's asset modules
+                parser: {
+                    dataUrlCondition: {
+                        maxSize: 10 * 1024, // Limit to 10KB for inline images
+                    },
+                },
+                generator: {
+                    filename: 'img/[name].[hash:7].[ext]', // Output folder for images
+                },
             },
             {
                 test: /\.css$/i,
-                use: ['style-loader', 'css-loader'],
+                use: [
+                    MiniCssExtractPlugin.loader, // Extract CSS for production
+                    'css-loader',
+                ],
             },
             {
                 test: /\.m?js$/,
@@ -55,12 +65,19 @@ module.exports = {
             },
         ],
     },
+    optimization: {
+        minimize: isProduction, // Enable minimization only in production
+        minimizer: isProduction ? [
+            new TerserWebpackPlugin(), // Minimize JS
+            new CssMinimizerPlugin(), // Minimize CSS
+        ] : [],
+    },
+    resolve: {
+        extensions: ['.js', '.json'],
+    },
     devServer: {
         static: './public', // Serve content from the public directory
         hot: true, // Enable hot module replacement
         port: 8080, // Port for the server
-    },
-    resolve: {
-        extensions: ['.js', '.json'],
     },
 };

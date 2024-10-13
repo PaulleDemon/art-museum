@@ -16,7 +16,7 @@ const app = express()
 const port = process.env.PORT || 3000
 
 let corsOptions = {
-	origin: ['http://localhost:8080'],
+	origin: ['http://localhost:8080', 'https://virtual-art-museum.netlify.app/'],
 }
 
 // Parse JSON requests
