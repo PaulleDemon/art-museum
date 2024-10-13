@@ -120,8 +120,18 @@ app.get('/list/:museum', async (req, res) => {
 
 const uploadToPinata = async (file) => {
 
+	const now = new Date();
+    const timestamp = now.toISOString().replace(/[:.]/g, '-'); // Format timestamp for filename
+    const originalName = file.originalname; 
 
-	file = new File([file.buffer], file.originalname, { type: file.mimetype })
+    const nameParts = originalName.split('.');
+    const fileName = nameParts.slice(0, -1).join('.'); 
+    const extension = nameParts.pop();
+
+    const newFileName = `${fileName}_${timestamp}.${extension}`;
+
+
+	file = new File([file.buffer], newFileName, { type: file.mimetype })
 
 	try {
 		const upload = await pinata.upload.file(file);
