@@ -391,13 +391,13 @@ loader.load('art_gallery2/scene.gltf', (gltf) => {
 
 
 function hideAnnotations(){
-    annotationMesh.forEach(({label, annotationDiv}) => {
+    Object.values(annotationMesh).forEach(({label, annotationDiv}) => {
         label.element.style.opacity = "0"
     })
 }
 
 function showAnnotations(){
-    annotationMesh.forEach(({label, annotationDiv}) => {
+    Object.values(annotationMesh).forEach(({label, annotationDiv}) => {
         label.element.style.opacity = "100"
     })
 }
