@@ -18,6 +18,9 @@ const port = process.env.PORT || 3000
 let corsOptions = {
 	origin: ['http://localhost:8080', 
 			'https://virtual-art-museum.netlify.app/'],
+
+	methods: ['GET', 'POST', 'PUT', 'DELETE'], 
+	credentials: true 
 }
 
 // Parse JSON requests
