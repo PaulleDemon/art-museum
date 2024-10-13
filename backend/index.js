@@ -247,9 +247,6 @@ app.post('/upload', upload.single('file'), async (req, res) => {
 })
 
 
-if (process.env.NODE_ENV !== "production"){
-	// Start the server
-	app.listen(port, () => {
-		console.log(`Server is running on http://localhost:${port}`)
-	})
-}
+app.listen(port, () => {
+	console.log(`Server is running on http://localhost:${port}`)
+})
