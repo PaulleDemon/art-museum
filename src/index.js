@@ -64,7 +64,6 @@ renderer.shadowMap.type = THREE.VSMShadowMap;
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
 container.appendChild(renderer.domElement);
 
-console.log("Database: ", getMuseumList(0))
 
 window.addEventListener('resize', onWindowResize);
 
