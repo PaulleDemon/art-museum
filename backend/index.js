@@ -17,7 +17,7 @@ const port = process.env.PORT || 3000
 
 let corsOptions = {
 	origin: ['http://localhost:8080', 
-			 'https://virtual-art-museum.netlify.app/'
+			 'https://virtual-art-museum.netlify.app'
 			]
 }
 
@@ -26,7 +26,7 @@ let corsOptions = {
 
 app.use(express.json()) // Parses incoming JSON requests
 app.use(express.urlencoded({ extended: true })) // Parses URL-encoded data
-app.use(cors()) // Applies CORS
+app.use(cors(corsOptions)) // Applies CORS
 
 // Supabase configuration
 const supabaseUrl = process.env.SUPABASE_URL
