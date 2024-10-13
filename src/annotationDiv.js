@@ -24,7 +24,7 @@ export default class AnnotationDiv{
 
         this.annotationDiv.addEventListener("dblclick", this.dblClickEvent.bind(this))
     
-        
+        this.setAnnotationDetails = this.setAnnotationDetails.bind(this)
     
     }
 
@@ -40,7 +40,7 @@ export default class AnnotationDiv{
         }
     }
 
-    annotationDetails(description, title, artist){
+    setAnnotationDetails(title, description, artist){
 
         this.expandedDiv.innerHTML = `
             <div class="">

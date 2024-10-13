@@ -9,7 +9,7 @@ const bodyParser = require('body-parser')
 // const FormData = require('form-data');
 // const fetch = require('node-fetch'); 
 
-const { PinataSDK } = require("pinata")
+const { PinataSDK } = require("pinata-web3")
 
 const { isNumeric } = require('./utils')
 
@@ -94,7 +94,7 @@ app.get('/list/:museum', async (req, res) => {
 
 		const { data, error: checkError } = await supabase
 			.from('museum')
-			.select('*')
+			.select('id, created_at, img_id, img_cid, museum, title, description, price, name')
 			.eq('museum', museum)
 		// .single() // Get a single entry if it exists
 
@@ -102,13 +102,13 @@ app.get('/list/:museum', async (req, res) => {
 			throw checkError
 		}
 
-		// console.log("data: ", data)
+		console.log("data: ", data)
 
 		return res.status(200).json({ success: true, data, message: 'Items retrieved successfully' })
 
 
 	} catch (error) {
-		return res.status(500).json({ success: false, message: 'List error', error: err.message })
+		return res.status(500).json({ success: false, message: 'List error', error: error.message })
 	}
 
 
@@ -126,8 +126,8 @@ const uploadToPinata = async (file) => {
 		// console.log(upload);
 
 		// const fileUrl = `${pinataURL}/v3/files/${upload.cid}`
-
-		return upload.cid
+		console.log("upload: ", upload)
+		return upload.IpfsHash
 
 	} catch (error) {
 		console.log(error);
@@ -207,7 +207,7 @@ app.post('/upload', upload.single('file'), async (req, res) => {
 					description,
 					price,
 					name,
-					img_cid: file_cid,
+					img_cid: file_cid, //store ipfs hash
 					museum: parseInt(museum)
 				})
 				.eq('img_id', img_id)
@@ -226,7 +226,7 @@ app.post('/upload', upload.single('file'), async (req, res) => {
 				.insert({
 					ip_address: ipAddress, img_id: 0, title, description,
 					price, name, img_cid: file_cid, museum: parseInt(museum)
-				})
+				})//store ipfs hash
 
 			if (error) {
 				throw error

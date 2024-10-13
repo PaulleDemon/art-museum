@@ -12,6 +12,7 @@ import FirstPersonPlayer from './control';
 import AnnotationDiv from "./annotationDiv";
 
 import { closeUploadModal, displayUploadModal, initUploadModal } from "./utils";
+import { getMuseumList } from "./services";
 
 const clock = new THREE.Clock();
 const scene = new THREE.Scene();
@@ -21,7 +22,7 @@ let model = null;
 const STEPS_PER_FRAME = 5;
 let fpView;
 let gallery_mesh;
-let annotations = []
+let annotationMesh = []
 
 initUploadModal()
 
@@ -63,7 +64,7 @@ renderer.toneMapping = THREE.ACESFilmicToneMapping;
 container.appendChild(renderer.domElement);
 
 
-
+console.log("Database: ", getMuseumList(0))
 
 window.addEventListener('resize', onWindowResize);
 
@@ -95,6 +96,25 @@ container.addEventListener("keyup", (e) => {
 })
 
 
+/**
+ * 
+ * @param {THREE.Mesh} mesh 
+ * @param {string} imgUrl 
+ */
+function setImageToMesh(mesh, imgUrl){
+
+    console.log("Mesh: ", mesh)
+
+    const material = new MeshStandardMaterial();
+
+    const textureLoader = new THREE.TextureLoader();
+    const texture = textureLoader.load(imgUrl);
+    material.map = texture;
+
+    mesh.material = material;
+    mesh.material.needsUpdate = true;
+}
+
 
 const loader = new GLTFLoader().setPath('/assets/');
 
@@ -105,7 +125,7 @@ loader.load('art_gallery2/scene.gltf', (gltf) => {
     scene.add(gltf.scene);
 
     let count = 0;
-    annotations = []
+    annotationMesh = []
     gltf.scene.traverse((child) => {
 
         if (child.name === "art_gallery") {
@@ -128,9 +148,9 @@ loader.load('art_gallery2/scene.gltf', (gltf) => {
             // center.copy(label.position)
             label.position.set(center.x, center.y, center.z)
 
-            annotations.push(label)
+            annotationMesh.push({label, annotationDiv, mesh: child})
 
-            annotationDiv.onAnnotationClick = ({event, id}) => {
+            annotationDiv.onAnnotationDblClick = ({event, id}) => {
                 const targetPosition = label.position;
 
                 // Vector from camera to the target position
@@ -147,7 +167,7 @@ loader.load('art_gallery2/scene.gltf', (gltf) => {
                 camera.lookAt(targetPosition);
             }
 
-            annotationDiv.onAnnotationDblClick = ({event, id}) => {
+            annotationDiv.onAnnotationClick = ({event, id}) => {
                 displayUploadModal()
             }
 
@@ -181,19 +201,32 @@ loader.load('art_gallery2/scene.gltf', (gltf) => {
     // worldOctree.fromGraphNode(gltf.scene);
 
     fpView.updatePlayer(0.01);
+    getMuseumList(0).then((data) => {
+        console.log("museum data: ", data)
+        data.data.forEach((data) => {
+
+            const {img_id, title, description, img_cid, price, name} = data
+
+            annotationMesh[data.img_id].annotationDiv.setAnnotationDetails(title, description, name)
+            
+            setImageToMesh(annotationMesh[data.img_id].mesh, `https://gateway.pinata.cloud/ipfs/${img_cid}`)
+        })
+    })
+
 
 });
 
 
+
 function hideAnnotations(){
-    annotations.forEach(lbl => {
-        lbl.element.style.opacity = "0"
+    annotationMesh.forEach(({label, annotationDiv}) => {
+        label.element.style.opacity = "0"
     })
 }
 
 function showAnnotations(){
-    annotations.forEach(lbl => {
-        lbl.element.style.opacity = "100"
+    annotationMesh.forEach(({label, annotationDiv}) => {
+        label.element.style.opacity = "100"
     })
 }
 

@@ -7,9 +7,11 @@ import { toastMessage } from "./utils"
 
 export async function getMuseumList(museumId) {
     
-    return await fetch(`${process.env.BACKEND_URL}/${museumId}`, {
+    const response =  await fetch(`${process.env.BACKEND_URL}/list/${museumId}`, {
         method: 'GET'
     })
+
+    return await response.json()
 }
 
 
@@ -73,7 +75,7 @@ export const uploadItem = async (file, title, description, name, price, imgId, m
         }
 
         const result = await response.json()
-        console.log('Upload successful:', result)
+        // console.log('Upload successful:', result)
     } catch (error) {
         console.error('Error uploading item:', error)
     }
