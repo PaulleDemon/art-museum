@@ -1,13 +1,22 @@
 const path = require('path');
+const { DefinePlugin } = require('webpack');
+
+const Dotenv = require('dotenv-webpack');
 
 module.exports = {
-    entry: './src/test.js',
+    entry: './src/index.js',
     output: {
         filename: 'main.js',
         path: path.resolve(__dirname, 'dist'),
         clean: true, // Clean the output directory before each build
     },
     mode: "development",
+    plugins: [
+        new Dotenv({
+            path: `src/.env`,
+            systemvars: true, //Set to true if you would rather load all system variables as well (useful for CI purposes)
+        }),
+    ],
     module: {
         rules: [
             {
@@ -19,18 +28,18 @@ module.exports = {
                 // (etc)
                 loader: 'url-loader',
                 options: {
-                  limit: 10000,
-                  name: 'img/[name].[hash:7].[ext]'
+                    limit: 10000,
+                    name: 'img/[name].[hash:7].[ext]'
                 }
-              },
-              {
+            },
+            {
                 // here I match only IMAGE and BIN files under the gltf folder
                 test: /gltf.*\.(bin|png|jpe?g|gif)$/,
                 // or use url-loader if you would like to embed images in the source gltf
                 loader: 'file-loader',
                 options: {
-                  // output folder for bin and image files, configure as needed
-                  name: 'gltf/[name].[hash:7].[ext]'
+                    // output folder for bin and image files, configure as needed
+                    name: 'gltf/[name].[hash:7].[ext]'
                 }
             },
             {
