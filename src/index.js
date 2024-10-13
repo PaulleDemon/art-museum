@@ -11,7 +11,7 @@ import { CSS2DRenderer, CSS2DObject } from 'three/addons/renderers/CSS2DRenderer
 import FirstPersonPlayer from './control';
 import AnnotationDiv from "./annotationDiv";
 
-import { closeUploadModal, displayUploadModal, initUploadModal } from "./utils";
+import { closeUploadModal, displayUploadModal, getMeshSizeInPixels, initUploadModal, setCropAspectRatio } from "./utils";
 import { getMuseumList } from "./services";
 import ImageMaterial from "./imageTexture";
 
@@ -256,6 +256,8 @@ function setImageToMesh(mesh, imgUrl){
         texture.wrapS = THREE.ClampToEdgeWrapping; // Prevent horizontal mirroring
         texture.wrapT = THREE.ClampToEdgeWrapping;
 
+        // texture.flipY = true;
+
         const imageBounds = new THREE.Vector2(texture.image.width, texture.image.height);
     
         // Set the imageBounds uniform for the material
@@ -263,7 +265,7 @@ function setImageToMesh(mesh, imgUrl){
         ImageMaterial.uniforms.map.value = texture;
 
         // Create a material with the texture
-        const material = new THREE.MeshBasicMaterial({ map: texture });
+        // const material = new THREE.MeshStandardMaterial({ map: texture });
         
     
         // Initial adjustment of the texture
@@ -273,6 +275,7 @@ function setImageToMesh(mesh, imgUrl){
         // const material = new THREE.MeshBasicMaterial({map: texture,  side: THREE.DoubleSide})
 
         mesh.material = ImageMaterial;
+        // mesh.material = material;
         // mesh.scale.x = texture.image.width
         // mesh.scale.y = texture.image.height
         mesh.material.needsUpdate = true
@@ -327,9 +330,8 @@ loader.load('art_gallery2/scene.gltf', (gltf) => {
                 const direction = new THREE.Vector3();
                 direction.subVectors(targetPosition, camera.position).normalize();
 
-                // Set the desired distance from the target
-                const distance = 2; // Adjust this to set how close you want the camera to get
-
+                // Adjust this to set how close you want the camera to get
+                const distance = 2; 
                 // Move the camera closer to the target
                 camera.position.addScaledVector(direction, distance);
 
@@ -338,7 +340,10 @@ loader.load('art_gallery2/scene.gltf', (gltf) => {
             }
 
             annotationDiv.onAnnotationClick = ({event, id}) => {
-                displayUploadModal()
+                const {width, height} = getMeshSizeInPixels(child, camera, renderer)
+                console.log("WIdth and height of mesh: ", getMeshSizeInPixels(child, camera, renderer))
+                displayUploadModal(width/height)
+                // setCropAspectRatio()
             }
 
             scene.add(label);

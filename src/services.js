@@ -50,7 +50,9 @@ export const uploadItem = async (file, title, description, name, price, imgId, m
     const error = validateData({title, description, price, name})
 
     if (error !== ''){
-        return toastMessage(error)
+        console.log("error: ", error)
+        // return toastMessage(error)
+        throw new Error(error)
     }
 
     // Append the file to the form data
@@ -64,6 +66,13 @@ export const uploadItem = async (file, title, description, name, price, imgId, m
     formData.append('img_id', imgId)
     formData.append('museum', museum)
 
+    // const response = await fetch(`${process.env.BACKEND_URL}/upload/`, {
+    //     method: 'POST',
+    //     body: formData
+    // })
+
+    // return await response.json()
+
     try {
         const response = await fetch(`${process.env.BACKEND_URL}/upload/`, {
             method: 'POST',
@@ -76,7 +85,9 @@ export const uploadItem = async (file, title, description, name, price, imgId, m
 
         const result = await response.json()
         // console.log('Upload successful:', result)
+        return result
     } catch (error) {
         console.error('Error uploading item:', error)
+        throw error
     }
 }

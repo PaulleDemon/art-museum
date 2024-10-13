@@ -33,20 +33,29 @@
             <input type="text" name="" id="upload-title" placeholder="title" maxlength="30">
             <textarea name="" id="upload-description" placeholder="description"></textarea>
             <input type="text" name="" id="upload-handle" placeholder="twitter handle" maxlength="30">
-            <button type="submit" id="upload-btn" class="btn">Upload</button>
+            <button type="submit" id="upload-btn" class="btn" style="display: flex; gap: 5px; justify-content: center; align-items: center;">
+                Upload 
+                <div class="spinner" id="upload-spinner" style="display: none;"></div>
+            </button>
         </div>
     </div>
 
-    <div id="upload-cropper-container" class="upload-cropper" style="display: none;">
-        <img src="" class="upload-preview" id="upload-preview">
+    <div class="upload-cropper-container" id="upload-cropper-container" 
+            style="display: none;">
+        <div id="cropper-container" class="upload-cropper" >
+            <img src="" class="crop-preview" id="crop-preview">
+        </div>
+        <div class="btn" id="crop-btn">Crop</div>
     </div>
 
     <div id="model-container"></div>
 
-    <script src="https://cdn.jsdelivr.net/npm/three@0.160.1/build/three.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.css" integrity="sha512-UtLOu9C7NuThQhuXXrGwx9Jb/z9zPQJctuAgNUBK3Z6kkSYT9wJ+2+dh6klS+TDBCV9kNPBbAxbVD+vCcfGPaA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <!-- <script src="https://cdn.jsdelivr.net/npm/three@0.160.1/build/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.138.3/examples/js/loaders/GLTFLoader.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.138.3/examples/js/controls/FirstPersonControls.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.138.3/examples/js/controls/OrbitControls.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.138.3/examples/js/controls/OrbitControls.js"></script> -->
 
 
     <!-- <script src="./scripts/index.mjs"></script> -->

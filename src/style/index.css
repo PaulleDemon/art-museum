@@ -1,16 +1,17 @@
-body{
+body {
     font-family: Arial, Helvetica, sans-serif;
 }
 
-.flex{
+.flex {
     display: flex;
 }
 
-.flex-col{
+.flex-col {
     flex-direction: column;
 }
 
-input, textarea{
+input,
+textarea {
     padding: 4px;
     outline: none;
     border-radius: 5px;
@@ -22,22 +23,23 @@ input, textarea{
     transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 }
 
-input:focus, input:focus-within, textarea:focus, textarea:focus-within{
+input:focus,
+input:focus-within,
+textarea:focus,
+textarea:focus-within {
     border-color: #80bdff;
     border: 1px solid #80bdff;
     outline: 0;
     box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
-    
 }
 
-textarea{
+textarea {
     resize: vertical;
     max-height: 100px;
     /* width: 100%; */
-
 }
 
-.toast-alert{
+.toast-alert {
     position: fixed;
     left: 50%;
     top: 10px;
@@ -54,16 +56,21 @@ textarea{
     padding: 5px 10px;
 }
 
-
-.btn{
+.btn {
     border: none;
     cursor: pointer;
     padding: 10px 15px;
     max-width: max-content;
     border-radius: 5px;
+    background-color: #fff;
+    color: #000;
 }
 
-.upload-modal{
+.btn:disabled{
+    background-color: #cfcfcf;
+}
+
+.upload-modal {
     z-index: 100;
     background-color: #000;
     position: fixed;
@@ -77,7 +84,7 @@ textarea{
     padding: 10px;
 }
 
-.upload-container{
+.upload-container {
     height: 100%;
     display: flex;
     max-height: 250px;
@@ -96,22 +103,53 @@ textarea{
     background-color: rgba(0, 123, 255, 0.1);
 }
 
-.upload-cropper{
-    background-color: red;
-    max-width: 100%;
-    max-height: 100%;
-    /* overflow: hidden; */
-    display: block;
-}
-
 .upload-preview {
     max-width: 100%;
     max-height: 100%;
     object-fit: cover;
-    display: none;
+    display: block;
 }
 
-.upload-details{
+.upload-cropper-container {
+    background-color: #272626;
+    max-width: 500px;
+    max-height: 530px;
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    z-index: 120;
+    position: fixed;
+    border-radius: 10px;
+    justify-content: center;
+    align-items: center;
+    padding: 5px;
+}
+
+.upload-cropper {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    max-height: 90%;
+    border-radius: 10px;
+}
+
+.crop-preview {
+    display: block;
+    max-width: 100%;
+    /* width: 250px; */
+    height: 100%;
+    max-height: 90%;
+    overflow: hidden;
+}
+
+.upload-details {
     display: flex;
     flex-direction: column;
     gap: 10px;
@@ -121,13 +159,13 @@ textarea{
     margin-top: 5px;
 }
 
-.upload-modal-close{
+.upload-modal-close {
     text-align: right;
     font-size: 25px;
     cursor: pointer;
 }
 
-.annotation{
+.annotation {
     background-color: #0000009a;
     border: 2px solid #fff;
     border-radius: 50%;
@@ -142,8 +180,7 @@ textarea{
     z-index: 5;
 }
 
-
-.expanded-annotation{
+.expanded-annotation {
     position: absolute;
     left: 30px;
     padding: 0px;
@@ -167,17 +204,35 @@ textarea{
     min-width: 100px;
 }
 
-.art-title{
+.art-title {
     font-size: 16px;
     font-weight: 500;
 }
 
-.art-description{
+.art-description {
     font-size: 14px;
     text-align: left;
 }
 
-.twitter-acc{
+.twitter-acc {
     margin-top: 100%;
     color: #0d72c5;
+}
+
+.spinner {
+    border: 5px solid rgba(34, 33, 33, 0.371);
+    border-top: 5px solid #1b1c1d;
+    border-radius: 50%;
+    width: 10px;
+    height: 10px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
 }
