@@ -164,8 +164,15 @@ export function initUploadModal() {
 
     const cropCallback = () => {
         const canvas = cropper.getCroppedCanvas();
-
+        console.log("File: ", file)
         const croppedImageDataURL = canvas?.toDataURL('image/jpeg');
+
+        canvas?.toBlob((blob) => {
+            if (blob) {
+                // Create a File object from the Blob
+                file = new File([blob], file.name, { type: file.type });
+            }
+        }, file.type)
 
         uploadPreview.src = croppedImageDataURL;
         uploadPreview.style.display = 'block';
@@ -203,9 +210,8 @@ function handleFile(file) {
 
             cropper = new Cropper(cropPreview, {
                 aspectRatio: cropAspectRatio,
-
+                rotatable:true,
                 crop(event) {
-                    // Optional: Handle crop events
                 },
             });
 
@@ -242,8 +248,8 @@ export function getMeshSizeInPixels(mesh, camera, renderer) {
     const screenCoordinates = vertices.map(vertex => {
         vector.copy(vertex).project(camera);
         return {
-            x: (vector.x + 1) * renderer.domElement.width / 2,
-            y: (-vector.y + 1) * renderer.domElement.height / 2
+            x: (vector.x + 1) * renderer.domElement.clientWidth / 2,
+            y: (-vector.y + 1) * renderer.domElement.clientHeight / 2
         };
     });
 

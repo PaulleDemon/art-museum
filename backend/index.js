@@ -130,11 +130,13 @@ const uploadToPinata = async (file) => {
 
     const newFileName = `${fileName}_${timestamp}.${extension}`;
 
-
+	console.log("File name: ", newFileName)
 	file = new File([file.buffer], newFileName, { type: file.mimetype })
 
 	try {
 		const upload = await pinata.upload.file(file);
+		console.log("Upload hash: ", upload)
+
 		return upload.IpfsHash
 
 	} catch (error) {

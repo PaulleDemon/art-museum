@@ -108,18 +108,10 @@ function setImageToMesh(mesh, imgUrl){
     mesh.material = imageMaterial;
      
     mesh.material.needsUpdate = true
-    textureLoader.load(imgUrl, (texture) => {
-
-
-        // texture.wrapS = THREE.ClampToEdgeWrapping; // Prevent horizontal mirroring
-        // texture.wrapT = THREE.ClampToEdgeWrapping;
-
-        // texture.flipY = true;
+    // textureLoader.load(imgUrl, (texture) => {
 
         
-
-        
-    });
+    // });
     
 }
 
@@ -164,6 +156,24 @@ loader.load('art_gallery2/scene.gltf', (gltf) => {
             // annotationDiv.style.width = `50px`
 
             child.material = new THREE.MeshBasicMaterial()
+
+            const geometry = child.geometry;
+            const uvs = geometry.attributes.uv.array;
+
+            // Rotate UVs (example: 90 degrees clockwise)
+            // for (let i = 0; i < uvs.length; i += 2) {
+            //     const u = uvs[i];
+            //     const v = uvs[i + 1];
+            //     uvs[i] = v; // Swap u and v
+            //     uvs[i + 1] = (1 - u) ; // Adjust v accordingly
+            // }
+
+            for (let i = 0; i < uvs.length; i += 2) {
+                uvs[i + 1] = 1 - uvs[i + 1]; // Invert the V coordinate
+            }
+            
+
+            geometry.attributes.uv.needsUpdate = true; // Update UVs
 
 
             const box = new THREE.Box3().setFromObject(child);
