@@ -16,11 +16,16 @@ const app = express()
 const port = process.env.PORT || 3000
 
 let corsOptions = {
-	origin: ['http://localhost:8080', 'https://virtual-art-museum.netlify.app/'],
+	origin: ['http://localhost:8080', 
+			'https://virtual-art-museum.netlify.app/'],
 }
 
 // Parse JSON requests
-app.use(express.json(), bodyParser.json(), express.urlencoded({ extended: true }), cors(corsOptions))
+// app.use(express.json(), bodyParser.json(), express.urlencoded({ extended: true }), cors(corsOptions))
+
+app.use(express.json()) // Parses incoming JSON requests
+app.use(express.urlencoded({ extended: true })) // Parses URL-encoded data
+app.use(cors(corsOptions)) // Applies CORS
 
 // Supabase configuration
 const supabaseUrl = process.env.SUPABASE_URL
@@ -99,7 +104,7 @@ app.get('/list/:museum', async (req, res) => {
 			throw checkError
 		}
 
-		console.log("data: ", data)
+		// console.log("data: ", data)
 
 		return res.status(200).json({ success: true, data, message: 'Items retrieved successfully' })
 
@@ -209,7 +214,7 @@ app.post('/upload', upload.single('file'), async (req, res) => {
 				throw updateError
 			}
 
-			console.log("values: ", values)
+			// console.log("values: ", values)
 
 			return res.status(200).json({ success: true, data: values, message: 'Item updated successfully' })
 

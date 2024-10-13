@@ -4,10 +4,12 @@ import { toastMessage } from "./utils"
 
 // configDotenv()
 
+const BACKEND_URL = process.env.NODE_ENV === "production" ? process.env.PROD_BACKEND_URL : process.env.BACKEND_URL;
+
 
 export async function getMuseumList(museumId) {
     
-    const response =  await fetch(`${process.env.BACKEND_URL}/list/${museumId}`, {
+    const response =  await fetch(`${BACKEND_URL}/list/${museumId}`, {
         method: 'GET'
     })
 
@@ -65,7 +67,7 @@ export const uploadItem = async (file, title, description, name, price, imgId, m
     formData.append('museum', museum)
 
     try {
-        const response = await fetch(`${process.env.BACKEND_URL}/upload/`, {
+        const response = await fetch(`${BACKEND_URL}/upload/`, {
             method: 'POST',
             body: formData
         })

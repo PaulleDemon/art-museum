@@ -10,6 +10,10 @@ const uploadInput = document.getElementById('upload-input');
 const uploadText = document.getElementById('upload-text');
 const uploadPreview = document.getElementById('upload-preview');
 
+const uploadTitle = document.getElementById("upload-title")
+const uploadDescription = document.getElementById("upload-description")
+const uploadHandle = document.getElementById("upload-handle")
+
 const uploadSpinner = document.getElementById("upload-spinner")
 
 const uploadSubmit = document.getElementById("upload-btn");
@@ -51,6 +55,10 @@ export function closeUploadModal() {
     uploadPreview.style.display = 'none';
     uploadText.style.display = 'block';
     uploadInput.value = null; // Clear file input
+
+    uploadTitle.value = "";
+    uploadDescription.value = "";
+    uploadHandle.value = "";
 }
 
 
@@ -64,24 +72,23 @@ export function displayUploadModal(cropAspect = 1 / 1, uploadProps) {
 
 export function initUploadModal() {
 
-    const uploadTitle = document.getElementById("upload-title")
-    const uploadDescription = document.getElementById("upload-description")
-    const uploadHandle = document.getElementById("upload-handle")
+    console.log("init")
 
     const closeBtn = document.getElementById("upload-close")
 
     closeBtn.addEventListener("click", closeUploadModal)
 
-    uploadContainer.addEventListener('click', () => {
+    const openInput = () => {
         uploadInput.click();
-    });
+    }
 
-    uploadInput.addEventListener('change', (event) => {
+    const fileChange = (event) => {
+        console.log("upload inpit: ", file)
         file = event.target.files[0];
         handleFile(file);
-    });
+    }
 
-    uploadSubmit.addEventListener("click", () => {
+    const submitCallback = () => {
 
         if (!file) {
             return toastMessage("Select an image.")
@@ -112,15 +119,7 @@ export function initUploadModal() {
             document.body.dispatchEvent(uploadEvent)
 
             if (res.success){
-                uploadModal.style.display = 'none';
-
-                uploadTitle.value = "";
-                uploadInput.value = null;
-                uploadPreview.src = ""
-                uploadPreview.style.display = 'none';
-                uploadText.style.display = 'block';
-                uploadDescription.value = "";
-                uploadHandle.value = "";
+                closeUploadModal()
 
             }
 
@@ -132,7 +131,17 @@ export function initUploadModal() {
             uploadSpinner.style.display = 'none';
             uploadSubmit.disabled = false;
         })
-    })
+
+    }
+
+    uploadContainer.removeEventListener('click', openInput);
+    uploadContainer.addEventListener('click', openInput);
+
+    uploadInput.removeEventListener('change', fileChange);
+    uploadInput.addEventListener('change', fileChange);
+
+    uploadSubmit.removeEventListener("click", submitCallback)
+    uploadSubmit.addEventListener("click", submitCallback)
 
     // Handle drag-and-drop
     uploadContainer.addEventListener('dragover', (event) => {
@@ -153,10 +162,10 @@ export function initUploadModal() {
     });
 
 
-
-    cropBtn.addEventListener("click", () => {
+    const cropCallback = () => {
         const canvas = cropper.getCroppedCanvas();
-        const croppedImageDataURL = canvas.toDataURL('image/jpeg');
+
+        const croppedImageDataURL = canvas?.toDataURL('image/jpeg');
 
         uploadPreview.src = croppedImageDataURL;
         uploadPreview.style.display = 'block';
@@ -166,8 +175,10 @@ export function initUploadModal() {
 
         cropper.destroy(); // Destroy previous instance if exists
 
+    }
 
-    })
+    cropBtn.removeEventListener("click", cropCallback)
+    cropBtn.addEventListener("click", cropCallback)
 
     uploadModal.style.display = "none";
 
