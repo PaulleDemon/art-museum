@@ -14,6 +14,7 @@ import AnnotationDiv from "./annotationDiv";
 import { closeUploadModal, displayUploadModal, getMeshSizeInPixels, initUploadModal, setCropAspectRatio } from "./utils";
 import { getMuseumList } from "./services";
 import ImageMaterial from "./imageTexture";
+import { Museum } from "./constants";
 
 const clock = new THREE.Clock();
 const scene = new THREE.Scene();
@@ -23,7 +24,7 @@ let model = null;
 const STEPS_PER_FRAME = 5;
 let fpView;
 let gallery_mesh;
-let annotationMesh = []
+let annotationMesh = {}
 
 initUploadModal()
 
@@ -239,22 +240,12 @@ function setImageToMesh2(mesh, imgUrl){
  */
 function setImageToMesh(mesh, imgUrl){
 
-    
-    // mesh.updateMatrix()
-    // console.log("CSS3d: ", mesh.position, mesh.name, mesh.rotation, mesh.scale)
-
-    // Add it to the scene
-    // scene.add(css3DObject);
-    
-
     const textureLoader = new THREE.TextureLoader();
-    const texture = textureLoader.load(imgUrl, (texture) => {
+    textureLoader.load(imgUrl, (texture) => {
 
-        // texture.wrapS = THREE.RepeatWrapping;
-        // texture.wrapT = THREE.RepeatWrapping;
 
-        texture.wrapS = THREE.ClampToEdgeWrapping; // Prevent horizontal mirroring
-        texture.wrapT = THREE.ClampToEdgeWrapping;
+        // texture.wrapS = THREE.ClampToEdgeWrapping; // Prevent horizontal mirroring
+        // texture.wrapT = THREE.ClampToEdgeWrapping;
 
         // texture.flipY = true;
 
@@ -264,22 +255,10 @@ function setImageToMesh(mesh, imgUrl){
         ImageMaterial.uniforms.imageBounds.value.copy(imageBounds);
         ImageMaterial.uniforms.map.value = texture;
 
-        // Create a material with the texture
-        // const material = new THREE.MeshStandardMaterial({ map: texture });
-        
-    
-        // Initial adjustment of the texture
-        // adjustTextureToFitMesh(mesh, texture);
-    
-
-        // const material = new THREE.MeshBasicMaterial({map: texture,  side: THREE.DoubleSide})
 
         mesh.material = ImageMaterial;
-        // mesh.material = material;
-        // mesh.scale.x = texture.image.width
-        // mesh.scale.y = texture.image.height
+     
         mesh.material.needsUpdate = true
-        console.log("mesh: ", texture.image, );
 
         
     });
@@ -287,6 +266,21 @@ function setImageToMesh(mesh, imgUrl){
 }
 
 
+document.body.addEventListener("uploadevent", (event) =>{
+
+    console.log("event: ", event)
+
+    const {img_id, title, description, img_url, price, name} = event.detail
+
+    if (!(img_id in annotationMesh)){
+        return
+    }
+
+    annotationMesh[img_id].annotationDiv.setAnnotationDetails(title, description, name)
+    
+    setImageToMesh(annotationMesh[img_id].mesh, img_url)
+
+})
 
 
 const loader = new GLTFLoader().setPath('/assets/');
@@ -298,7 +292,7 @@ loader.load('art_gallery2/scene.gltf', (gltf) => {
     scene.add(gltf.scene);
 
     let count = 0;
-    annotationMesh = []
+    annotationMesh = {}
     gltf.scene.traverse((child) => {
 
         if (child.name === "art_gallery") {
@@ -316,12 +310,12 @@ loader.load('art_gallery2/scene.gltf', (gltf) => {
             box.getCenter(center);  // Get the center of the bounding box in world coordinates
             
             // const annotationDiv = createAnnotationDiv(count)
-            const annotationDiv = new AnnotationDiv(count, count)
+            const annotationDiv = new AnnotationDiv(count, child.name)
             const label = new CSS2DObject(annotationDiv.getElement())
             // center.copy(label.position)
             label.position.set(center.x, center.y, center.z)
 
-            annotationMesh.push({label, annotationDiv, mesh: child})
+            annotationMesh[child.name] = {label, annotationDiv, mesh: child}
 
             annotationDiv.onAnnotationDblClick = ({event, id}) => {
                 const targetPosition = label.position;
@@ -341,8 +335,7 @@ loader.load('art_gallery2/scene.gltf', (gltf) => {
 
             annotationDiv.onAnnotationClick = ({event, id}) => {
                 const {width, height} = getMeshSizeInPixels(child, camera, renderer)
-                console.log("WIdth and height of mesh: ", getMeshSizeInPixels(child, camera, renderer))
-                displayUploadModal(width/height)
+                displayUploadModal(width/height, {img_id: child.name, museum: Museum.ART_GALLERY})
                 // setCropAspectRatio()
             }
 
@@ -382,9 +375,13 @@ loader.load('art_gallery2/scene.gltf', (gltf) => {
 
             const {img_id, title, description, img_cid, price, name} = data
 
-            annotationMesh[data.img_id].annotationDiv.setAnnotationDetails(title, description, name)
+            if (!(img_id in annotationMesh)){
+                return
+            }
+
+            annotationMesh[img_id].annotationDiv.setAnnotationDetails(title, description, name)
             
-            setImageToMesh(annotationMesh[data.img_id].mesh, `https://gateway.pinata.cloud/ipfs/${img_cid}`)
+            setImageToMesh(annotationMesh[img_id].mesh, `https://gateway.pinata.cloud/ipfs/${img_cid}`)
         })
     })
 

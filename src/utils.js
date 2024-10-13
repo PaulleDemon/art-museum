@@ -26,6 +26,13 @@ let cropper;
 let file = null;
 let cropAspectRatio = 1 / 1;
 
+let uploadProperties = {
+    museum: 0,
+    img_id: null
+}
+
+
+
 export function toastMessage(message) {
 
     toastAlert.style.display = "flex";
@@ -47,9 +54,12 @@ export function closeUploadModal() {
 }
 
 
-export function displayUploadModal(cropAspect = 1 / 1) {
+export function displayUploadModal(cropAspect = 1 / 1, uploadProps) {
     uploadModal.style.display = "block";
-    cropAspectRatio = cropAspect
+    cropAspectRatio = cropAspect;
+
+    uploadProperties = uploadProps;
+    console.log("upload propers: ", uploadProps)
 }
 
 export function initUploadModal() {
@@ -82,13 +92,38 @@ export function initUploadModal() {
         uploadSubmit.disabled = true;
 
 
-        uploadItem(file, uploadTitle.value, uploadDescription.value, uploadHandle.value, null, 0, 0).then((res) =>{
+        const {img_id, museum} = uploadProperties;
+
+        uploadItem(file, uploadTitle.value, uploadDescription.value, uploadHandle.value, null, img_id, museum).then((res) =>{
             uploadSpinner.style.display = 'none';
             uploadSubmit.disabled = false;
             
+
+            const uploadEvent = new CustomEvent("uploadevent", {
+                                        detail:{
+                                                    ...uploadProperties, 
+                                                    title: uploadTitle.value,
+                                                    description: uploadDescription.value,
+                                                    name: uploadHandle.value,
+                                                    img_url: URL.createObjectURL(file)
+                                                }
+                                            });
+
+            document.body.dispatchEvent(uploadEvent)
+
             if (res.success){
-                uploadContainer.style.display = 'none';
+                uploadModal.style.display = 'none';
+
+                uploadTitle.value = "";
+                uploadInput.value = null;
+                uploadPreview.src = ""
+                uploadPreview.style.display = 'none';
+                uploadText.style.display = 'block';
+                uploadDescription.value = "";
+                uploadHandle.value = "";
+
             }
+
 
         }).catch((error) => {
             console.log("error 2: ", error.message)

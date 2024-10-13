@@ -45,8 +45,6 @@ const validateData = (data) => {
 export const uploadItem = async (file, title, description, name, price, imgId, museum) => {
     const formData = new FormData()
 
-    console.log("name: ", name)
-
     const error = validateData({title, description, price, name})
 
     if (error !== ''){
@@ -65,13 +63,6 @@ export const uploadItem = async (file, title, description, name, price, imgId, m
     formData.append('name', name)
     formData.append('img_id', imgId)
     formData.append('museum', museum)
-
-    // const response = await fetch(`${process.env.BACKEND_URL}/upload/`, {
-    //     method: 'POST',
-    //     body: formData
-    // })
-
-    // return await response.json()
 
     try {
         const response = await fetch(`${process.env.BACKEND_URL}/upload/`, {

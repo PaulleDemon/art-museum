@@ -15,6 +15,24 @@ export default class AnnotationDiv{
         this.expandedDiv = document.createElement('div');
         this.expandedDiv.className = 'expanded-annotation';
 
+        const uploadBtn = document.createElement("button")
+        uploadBtn.textContent = "Upload";
+        uploadBtn.classList.add("btn")
+        uploadBtn.addEventListener("click", (event) => {
+            this.onAnnotationClick({event: null, id: this.__id})
+        })
+
+        const container = document.createElement("div")
+        container.style.width = "100%"
+        container.style.height = "100%"
+        container.style.display = "flex"
+        container.style.alignItems = "center"
+        container.style.justifyContent = "center"
+
+        container.appendChild(uploadBtn)
+
+        this.expandedDiv.appendChild(container)
+
         this.annotationDiv.appendChild(this.expandedDiv);
 
         this.onAnnotationClick = onAnnotationClick;
@@ -43,11 +61,9 @@ export default class AnnotationDiv{
     setAnnotationDetails(title, description, artist){
 
         this.expandedDiv.innerHTML = `
-            <div class="">
                 <p class="art-title">${title}</p>
                 <p class="art-description">${description}</p>
                 <a class="twitter-acc" href="https://x.com/${artist}" target="_blank" rel="noopener noreferrer">@${artist}</a>
-            </div>
     `
 
     }

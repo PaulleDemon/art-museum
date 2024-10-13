@@ -178,6 +178,7 @@ textarea {
     align-items: center;
     justify-content: center;
     z-index: 5;
+    cursor: pointer;
 }
 
 .expanded-annotation {
@@ -192,20 +193,22 @@ textarea {
     border-radius: 5px;
     background-color: #000000e4;
     transition: width 0.4s, min-width 0.4s, height 0.4s;
-    z-index: 80;
+    z-index: 5;
     display: flex;
     flex-direction: column;
+    cursor: default;
 }
 
 .annotation:hover .expanded-annotation {
-    width: 150px;
+    width: 250px;
     height: 200px;
-    padding: 5px;
+    padding: 10px;
     min-width: 100px;
+    border: 1px solid #fff;
 }
 
 .art-title {
-    font-size: 16px;
+    font-size: 18px;
     font-weight: 500;
 }
 
@@ -215,8 +218,8 @@ textarea {
 }
 
 .twitter-acc {
-    margin-top: 100%;
-    color: #0d72c5;
+    margin-top: auto;
+    color: #258fe6;
 }
 
 .spinner {

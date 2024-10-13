@@ -152,12 +152,12 @@ app.post('/upload', upload.single('file'), async (req, res) => {
 		return res.status(400).json({ success: false, errors })
 	}
 
-	let file_cid = null
+	let file_ipfs = null
 
 	// Handle file upload to Pinata
 	if (req.file) {
 		try {
-			file_cid = await uploadToPinata(req.file)
+			file_ipfs = await uploadToPinata(req.file)
 		} catch (err) {
 			return res.status(500).json({ success: false, message: 'File upload failed', error: err.message })
 		}
@@ -202,12 +202,12 @@ app.post('/upload', upload.single('file'), async (req, res) => {
 				.from('museum')
 				.update({
 					ip_address: ipAddress,
-					img_id: 0,
+					img_id: img_id,
 					title,
 					description,
 					price,
 					name,
-					img_cid: file_cid, //store ipfs hash
+					img_cid: file_ipfs, //store ipfs hash
 					museum: parseInt(museum)
 				})
 				.eq('img_id', img_id)
@@ -215,6 +215,8 @@ app.post('/upload', upload.single('file'), async (req, res) => {
 			if (updateError) {
 				throw updateError
 			}
+
+			console.log("values: ", values)
 
 			return res.status(200).json({ success: true, data: values, message: 'Item updated successfully' })
 
@@ -224,8 +226,8 @@ app.post('/upload', upload.single('file'), async (req, res) => {
 			const { values, error } = await supabase
 				.from('museum')
 				.insert({
-					ip_address: ipAddress, img_id: 0, title, description,
-					price, name, img_cid: file_cid, museum: parseInt(museum)
+					ip_address: ipAddress, img_id: img_id, title, description,
+					price, name, img_cid: file_ipfs, museum: parseInt(museum)
 				})//store ipfs hash
 
 			if (error) {
