@@ -6,14 +6,11 @@ const cors = require('cors')
 const { createClient } = require('@supabase/supabase-js')
 const multer = require('multer')
 const bodyParser = require('body-parser')
-// const FormData = require('form-data');
-// const fetch = require('node-fetch'); 
 
 const { PinataSDK } = require("pinata-web3")
 
 const { isNumeric } = require('./utils')
 
-// TODO: upload to IFPS instead of files
 
 const app = express()
 const port = 3000
@@ -30,8 +27,8 @@ const supabaseUrl = process.env.SUPABASE_URL
 const supabaseKey = process.env.SUPABASE_KEY
 const supabase = createClient(supabaseUrl, supabaseKey)
 
-const pinataApiKey = process.env.PINATA_API_KEY
-const pinataSecretApiKey = process.env.PINATA_SECRET_API_KEY
+// const pinataApiKey = process.env.PINATA_API_KEY
+// const pinataSecretApiKey = process.env.PINATA_SECRET_API_KEY
 
 const pinataURL = process.env.PINATA_URL
 const pinataJWT = process.env.PINATA_JWT
@@ -117,16 +114,11 @@ app.get('/list/:museum', async (req, res) => {
 
 const uploadToPinata = async (file) => {
 
-	// console.log("Fule: ", file, typeof file)
 
 	file = new File([file.buffer], file.originalname, { type: file.mimetype })
 
 	try {
 		const upload = await pinata.upload.file(file);
-		// console.log(upload);
-
-		// const fileUrl = `${pinataURL}/v3/files/${upload.cid}`
-		console.log("upload: ", upload)
 		return upload.IpfsHash
 
 	} catch (error) {
@@ -163,6 +155,7 @@ app.post('/upload', upload.single('file'), async (req, res) => {
 		}
 	}
 
+	// TODO: prevent people from uploading multiple times
 	// try {
 	// 	// check if data already exist 
 	// 	const { data: existingEntries, error: checkError } = await supabase
