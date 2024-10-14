@@ -20,9 +20,36 @@
             <div id="progress"></div>
         </div>
 
-        <div class="flex flex-col">
-            <p>Loading...</p>
-           <p> Tip: use WASD keys to look around </p>
+        <div class="flex flex-col" style="gap: 15px; text-align: center;">
+            <div>Loading gallery. Please wait...</div>
+            <div> Tip: use WASD keys to look around </div>
+        </div>
+
+    </div>
+
+    <div class="menu-container" id="menu-container">
+        <div class="flex" style="width:100%;">
+            <i class="bi bi-x" id="menu-close"></i>
+        </div>
+        <h2>
+            Menu
+        </h2>
+
+        <div style="font-size: 18px; font-weight: 600;">
+            Select the Gallery / Museum
+        </div>
+        <div id="menu-selection-list">
+
+        </div>
+        <hr  style="margin-top: 30px;">
+        <div >
+            <ul style="font-size: 14px; color: #2a2a2a; display: flex; flex-direction: column; gap: 10px;">
+                <li>Use WASD to move around</li>
+                <li>Use space to Jump</li>
+                <li>Escape key to open/close menu</li>
+                <li>Hover on annotation for details</li>
+                <li>Click on annotation to upload image</li>
+            </ul>
         </div>
 
     </div>

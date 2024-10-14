@@ -39,6 +39,15 @@ textarea {
     /* width: 100%; */
 }
 
+hr {
+    border: 0;
+    clear:both;
+    display:block;
+    width: 96%;               
+    background-color:#545453;
+    height: 1px;
+}
+
 .toast-alert {
     position: fixed;
     left: 50%;
@@ -76,8 +85,8 @@ textarea {
     width: 100%;
     height: 100%;
     position: fixed;
-    z-index: 50;
-    background-color: #ffffffa5;
+    z-index: 1000;
+    background-color: #ffffffe2;
     align-items: center;
     justify-content: center;
 }
@@ -86,7 +95,7 @@ textarea {
     width: 100%;
     max-width: 200px;
     height: 20px;
-    background-color: #ddd;
+    background-color: #c5c1c1;
     border-radius: 5px;
     overflow: hidden;
     position: relative;
@@ -99,6 +108,65 @@ textarea {
     width: 0;
     transition: width 0.3s;
 }
+
+/*------------------- menu container -------------------- */
+
+#menu-container{
+    display: flex;
+    flex-direction: column;
+    width: 450px;
+    height: 500px;
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    border-radius: 5px;
+    transform: translate(-50%, -50%);
+    z-index: 100;
+    background-color: #ffffffe2;
+    align-items: center;
+    padding: 10px;
+    /* justify-content: center; */
+}
+
+#menu-close{
+    font-size: 30px;
+    margin-left: auto;
+    cursor: pointer;
+    /* background-color: #86ee8993; */
+    border-radius: 25px;
+}
+
+#menu-selection-list{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 10px;
+    width: 100%;
+    align-items: center;
+}
+
+.menu-item{
+    cursor: pointer;
+    padding: 4px;
+    transition: all 0.4s;
+}
+
+.menu-item::before{
+    content: '▶  ';
+    width: 200px;
+}
+
+
+.menu-item:hover{
+    background-color: #ddfb83e1;
+}
+
+.menu-item:hover::before{
+    content: '▶ ';
+    width: 200px;
+}
+
+/*-------------------- upload modal ----------------------*/
 
 .upload-modal {
     z-index: 100;
