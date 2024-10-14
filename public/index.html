@@ -14,11 +14,24 @@
 </head>
 <body>
 
-    <div class="toast-alert" id="toast-alert">
+    <div class="loading-container" id="loading-container">
+
+        <div id="loading-bar">
+            <div id="progress"></div>
+        </div>
+
+        <div class="flex flex-col">
+            <p>Loading...</p>
+           <p> Tip: use WASD keys to look around </p>
+        </div>
+
+    </div>
+
+    <div class="toast-alert" id="toast-alert" style="display: none;">
     </div>
 
     <!-- <div>hello</div> -->
-    <div class="upload-modal" id="upload-modal">
+    <div class="upload-modal" id="upload-modal" style="display: none;">
         <div id="upload-close" class="upload-modal-close">
             <i class="bi bi-x"></i>
         </div>

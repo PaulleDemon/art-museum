@@ -288,17 +288,6 @@
 					"index":4
 				}
 			}
-		},
-		{
-			"doubleSided":true,
-			"name":"Material",
-			"pbrMetallicRoughness":{
-				"baseColorTexture":{
-					"index":5
-				},
-				"metallicFactor":0,
-				"roughnessFactor":0.5
-			}
 		}
 	],
 	"meshes":[
@@ -342,8 +331,7 @@
 						"NORMAL":13,
 						"TEXCOORD_0":14
 					},
-					"indices":11,
-					"material":1
+					"indices":11
 				}
 			]
 		},
@@ -867,10 +855,6 @@
 		{
 			"sampler":0,
 			"source":4
-		},
-		{
-			"sampler":0,
-			"source":5
 		}
 	],
 	"images":[
@@ -898,11 +882,6 @@
 			"mimeType":"image/png",
 			"name":"Art_Room1_metallicRoughness",
 			"uri":"Art_Room1_metallicRoughness.png"
-		},
-		{
-			"mimeType":"image/png",
-			"name":"BrowseDocs.com",
-			"uri":"BrowseDocs_com.png"
 		}
 	],
 	"accessors":[

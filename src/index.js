@@ -11,7 +11,7 @@ import { CSS2DRenderer, CSS2DObject } from 'three/addons/renderers/CSS2DRenderer
 import FirstPersonPlayer from './control';
 import AnnotationDiv from "./annotationDiv";
 
-import {  displayUploadModal, getMeshSizeInPixels, initUploadModal } from "./utils";
+import { displayUploadModal, getMeshSizeInPixels, initUploadModal } from "./utils";
 import { getMuseumList } from "./services";
 import { Museum } from "./constants";
 import createImageMaterial from "./imageTexture";
@@ -80,7 +80,7 @@ function onWindowResize() {
 
 container.addEventListener("keydown", (e) => {
 
-    if (e.key === "Shift"){
+    if (e.key === "Shift") {
         hideAnnotations()
     }
 
@@ -88,7 +88,7 @@ container.addEventListener("keydown", (e) => {
 
 container.addEventListener("keyup", (e) => {
 
-    if (e.key === "Shift"){
+    if (e.key === "Shift") {
         showAnnotations()
     }
 
@@ -100,10 +100,10 @@ container.addEventListener("keyup", (e) => {
  * @param {THREE.Mesh} mesh 
  * @param {string} imgUrl 
  */
-function setImageToMesh(mesh, imgUrl){
+function setImageToMesh(mesh, imgUrl) {
 
     // const textureLoader = new THREE.TextureLoader();
-    const {width, height} = getMeshSizeInPixels(mesh, camera, renderer)
+    const { width, height } = getMeshSizeInPixels(mesh, camera, renderer)
 
     // const {width: w1, height: h1} = calculateProjectedDimensions(mesh.geometry, camera, renderer)
 
@@ -111,28 +111,28 @@ function setImageToMesh(mesh, imgUrl){
     const imageMaterial = createImageMaterial(imgUrl, width / height)
 
     mesh.material = imageMaterial;
-     
+
     mesh.material.needsUpdate = true
     // textureLoader.load(imgUrl, (texture) => {
 
-        
+
     // });
-    
+
 }
 
 
-document.body.addEventListener("uploadevent", (event) =>{
+document.body.addEventListener("uploadevent", (event) => {
 
     console.log("event: ", event)
 
-    const {img_id, title, description, img_url, price, name} = event.detail
+    const { img_id, title, description, img_url, price, name } = event.detail
 
-    if (!(img_id in annotationMesh)){
+    if (!(img_id in annotationMesh)) {
         return
     }
 
     annotationMesh[img_id].annotationDiv.setAnnotationDetails(title, description, name)
-    
+
     setImageToMesh(annotationMesh[img_id].mesh, img_url)
 
 })
@@ -157,7 +157,7 @@ loader.load('art_gallery2/scene.gltf', (gltf) => {
         if (child.isMesh && /^art_holder\d*$/.test(child.name)) {  // Regex to match "art_holder", "art_holder1", "art_holder2", etc.
             count += 1;
             // Create an annotation div element
-            
+
             // annotationDiv.style.width = `50px`
 
             child.material = new THREE.MeshBasicMaterial()
@@ -176,7 +176,7 @@ loader.load('art_gallery2/scene.gltf', (gltf) => {
             for (let i = 0; i < uvs.length; i += 2) {
                 uvs[i + 1] = 1 - uvs[i + 1]; // Invert the V coordinate
             }
-            
+
 
             geometry.attributes.uv.needsUpdate = true; // Update UVs
 
@@ -184,16 +184,16 @@ loader.load('art_gallery2/scene.gltf', (gltf) => {
             const box = new THREE.Box3().setFromObject(child);
             const center = new THREE.Vector3();
             box.getCenter(center);  // Get the center of the bounding box in world coordinates
-            
+
             // const annotationDiv = createAnnotationDiv(count)
             const annotationDiv = new AnnotationDiv(count, child.name)
             const label = new CSS2DObject(annotationDiv.getElement())
             // center.copy(label.position)
             label.position.set(center.x, center.y, center.z)
 
-            annotationMesh[child.name] = {label, annotationDiv, mesh: child}
+            annotationMesh[child.name] = { label, annotationDiv, mesh: child }
 
-            annotationDiv.onAnnotationDblClick = ({event, id}) => {
+            annotationDiv.onAnnotationDblClick = ({ event, id }) => {
                 const targetPosition = label.position;
 
                 // Vector from camera to the target position
@@ -201,7 +201,7 @@ loader.load('art_gallery2/scene.gltf', (gltf) => {
                 direction.subVectors(targetPosition, camera.position).normalize();
 
                 // Adjust this to set how close you want the camera to get
-                const distance = 2; 
+                const distance = 2;
                 // Move the camera closer to the target
                 camera.position.addScaledVector(direction, distance);
 
@@ -209,9 +209,9 @@ loader.load('art_gallery2/scene.gltf', (gltf) => {
                 camera.lookAt(targetPosition);
             }
 
-            annotationDiv.onAnnotationClick = ({event, id}) => {
-                const {width, height} = getMeshSizeInPixels(child, camera, renderer)
-                displayUploadModal(width/height, {img_id: child.name, museum: Museum.ART_GALLERY})
+            annotationDiv.onAnnotationClick = ({ event, id }) => {
+                const { width, height } = getMeshSizeInPixels(child, camera, renderer)
+                displayUploadModal(width / height, { img_id: child.name, museum: Museum.ART_GALLERY })
                 // setCropAspectRatio()
             }
 
@@ -246,35 +246,44 @@ loader.load('art_gallery2/scene.gltf', (gltf) => {
     // worldOctree.fromGraphNode(gltf.scene);
 
     fpView.updatePlayer(0.01);
+
+    document.getElementById('loading-container').style.display = 'none'; //hide the loading progress
+
+
     getMuseumList(0).then((data) => {
         console.log("museum data: ", data)
         data.data.forEach((data) => {
 
-            const {img_id, title, description, img_cid, price, name} = data
+            const { img_id, title, description, img_cid, price, name } = data
 
-            if (!(img_id in annotationMesh)){
+            if (!(img_id in annotationMesh)) {
                 return
             }
 
             annotationMesh[img_id].annotationDiv.setAnnotationDetails(title, description, name)
-            
+
             setImageToMesh(annotationMesh[img_id].mesh, `https://gateway.pinata.cloud/ipfs/${img_cid}`)
         })
     })
 
 
+}, (xhr) => {
+    // Update loading progress
+    const progress = xhr.total > 0 ? (xhr.loaded / xhr.total) * 100 : (xhr.loaded / 60000) // a fixed number of bytes
+    document.getElementById('progress').style.width = progress + '%'
+    console.log("Progress: ", xhr.loaded, xhr.total, xhr);
 });
 
 
 
-function hideAnnotations(){
-    Object.values(annotationMesh).forEach(({label, annotationDiv}) => {
+function hideAnnotations() {
+    Object.values(annotationMesh).forEach(({ label, annotationDiv }) => {
         label.element.style.opacity = "0"
     })
 }
 
-function showAnnotations(){
-    Object.values(annotationMesh).forEach(({label, annotationDiv}) => {
+function showAnnotations() {
+    Object.values(annotationMesh).forEach(({ label, annotationDiv }) => {
         label.element.style.opacity = "100"
     })
 }
