@@ -288,6 +288,17 @@
 					"index":4
 				}
 			}
+		},
+		{
+			"doubleSided":true,
+			"name":"test material",
+			"pbrMetallicRoughness":{
+				"baseColorTexture":{
+					"index":5
+				},
+				"metallicFactor":0,
+				"roughnessFactor":0.5
+			}
 		}
 	],
 	"meshes":[
@@ -318,7 +329,8 @@
 						"NORMAL":9,
 						"TEXCOORD_0":10
 					},
-					"indices":11
+					"indices":11,
+					"material":1
 				}
 			]
 		},
@@ -331,7 +343,8 @@
 						"NORMAL":13,
 						"TEXCOORD_0":14
 					},
-					"indices":11
+					"indices":11,
+					"material":1
 				}
 			]
 		},
@@ -344,7 +357,8 @@
 						"NORMAL":16,
 						"TEXCOORD_0":17
 					},
-					"indices":11
+					"indices":11,
+					"material":1
 				}
 			]
 		},
@@ -378,7 +392,8 @@
 						"TEXCOORD_3":30,
 						"TEXCOORD_4":31
 					},
-					"indices":11
+					"indices":11,
+					"material":1
 				}
 			]
 		},
@@ -412,7 +427,8 @@
 						"TEXCOORD_3":44,
 						"TEXCOORD_4":45
 					},
-					"indices":11
+					"indices":11,
+					"material":1
 				}
 			]
 		},
@@ -633,7 +649,8 @@
 						"TEXCOORD_3":136,
 						"TEXCOORD_4":137
 					},
-					"indices":11
+					"indices":11,
+					"material":1
 				}
 			]
 		},
@@ -812,7 +829,8 @@
 						"NORMAL":205,
 						"TEXCOORD_0":206
 					},
-					"indices":74
+					"indices":74,
+					"material":1
 				}
 			]
 		},
@@ -855,6 +873,10 @@
 		{
 			"sampler":0,
 			"source":4
+		},
+		{
+			"sampler":0,
+			"source":5
 		}
 	],
 	"images":[
@@ -882,6 +904,11 @@
 			"mimeType":"image/png",
 			"name":"Art_Room1_metallicRoughness",
 			"uri":"Art_Room1_metallicRoughness.png"
+		},
+		{
+			"mimeType":"image/jpeg",
+			"name":"boat-7054177_640",
+			"uri":"boat-7054177_640.jpg"
 		}
 	],
 	"accessors":[

@@ -933,6 +933,17 @@
 					"index":7
 				}
 			}
+		},
+		{
+			"doubleSided":true,
+			"name":"test-material",
+			"pbrMetallicRoughness":{
+				"baseColorTexture":{
+					"index":8
+				},
+				"metallicFactor":0,
+				"roughnessFactor":0.5
+			}
 		}
 	],
 	"meshes":[
@@ -1132,7 +1143,8 @@
 						"NORMAL":75,
 						"TEXCOORD_0":76
 					},
-					"indices":77
+					"indices":77,
+					"material":2
 				}
 			]
 		},
@@ -1145,7 +1157,8 @@
 						"NORMAL":79,
 						"TEXCOORD_0":80
 					},
-					"indices":81
+					"indices":81,
+					"material":2
 				}
 			]
 		},
@@ -1158,7 +1171,8 @@
 						"NORMAL":83,
 						"TEXCOORD_0":84
 					},
-					"indices":81
+					"indices":81,
+					"material":2
 				}
 			]
 		},
@@ -1171,7 +1185,8 @@
 						"NORMAL":86,
 						"TEXCOORD_0":87
 					},
-					"indices":81
+					"indices":81,
+					"material":2
 				}
 			]
 		},
@@ -1184,7 +1199,8 @@
 						"NORMAL":89,
 						"TEXCOORD_0":90
 					},
-					"indices":81
+					"indices":81,
+					"material":2
 				}
 			]
 		},
@@ -1197,7 +1213,8 @@
 						"NORMAL":92,
 						"TEXCOORD_0":93
 					},
-					"indices":81
+					"indices":81,
+					"material":2
 				}
 			]
 		},
@@ -1210,7 +1227,8 @@
 						"NORMAL":95,
 						"TEXCOORD_0":96
 					},
-					"indices":81
+					"indices":81,
+					"material":2
 				}
 			]
 		},
@@ -1223,7 +1241,8 @@
 						"NORMAL":98,
 						"TEXCOORD_0":99
 					},
-					"indices":81
+					"indices":81,
+					"material":2
 				}
 			]
 		},
@@ -1236,7 +1255,8 @@
 						"NORMAL":101,
 						"TEXCOORD_0":102
 					},
-					"indices":81
+					"indices":81,
+					"material":2
 				}
 			]
 		},
@@ -1249,7 +1269,8 @@
 						"NORMAL":104,
 						"TEXCOORD_0":105
 					},
-					"indices":81
+					"indices":81,
+					"material":2
 				}
 			]
 		},
@@ -1262,7 +1283,8 @@
 						"NORMAL":107,
 						"TEXCOORD_0":108
 					},
-					"indices":81
+					"indices":81,
+					"material":2
 				}
 			]
 		},
@@ -1275,7 +1297,8 @@
 						"NORMAL":110,
 						"TEXCOORD_0":111
 					},
-					"indices":81
+					"indices":81,
+					"material":2
 				}
 			]
 		},
@@ -1288,7 +1311,8 @@
 						"NORMAL":113,
 						"TEXCOORD_0":114
 					},
-					"indices":81
+					"indices":81,
+					"material":2
 				}
 			]
 		},
@@ -1301,7 +1325,8 @@
 						"NORMAL":116,
 						"TEXCOORD_0":117
 					},
-					"indices":81
+					"indices":81,
+					"material":2
 				}
 			]
 		},
@@ -1314,7 +1339,8 @@
 						"NORMAL":119,
 						"TEXCOORD_0":120
 					},
-					"indices":81
+					"indices":81,
+					"material":2
 				}
 			]
 		},
@@ -1327,7 +1353,8 @@
 						"NORMAL":122,
 						"TEXCOORD_0":123
 					},
-					"indices":81
+					"indices":81,
+					"material":2
 				}
 			]
 		},
@@ -1340,7 +1367,8 @@
 						"NORMAL":125,
 						"TEXCOORD_0":126
 					},
-					"indices":81
+					"indices":81,
+					"material":2
 				}
 			]
 		},
@@ -1353,7 +1381,8 @@
 						"NORMAL":128,
 						"TEXCOORD_0":129
 					},
-					"indices":81
+					"indices":81,
+					"material":2
 				}
 			]
 		},
@@ -1366,7 +1395,8 @@
 						"NORMAL":131,
 						"TEXCOORD_0":132
 					},
-					"indices":81
+					"indices":81,
+					"material":2
 				}
 			]
 		},
@@ -1379,7 +1409,8 @@
 						"NORMAL":134,
 						"TEXCOORD_0":135
 					},
-					"indices":81
+					"indices":81,
+					"material":2
 				}
 			]
 		},
@@ -1392,7 +1423,8 @@
 						"NORMAL":137,
 						"TEXCOORD_0":138
 					},
-					"indices":81
+					"indices":81,
+					"material":2
 				}
 			]
 		},
@@ -1405,7 +1437,8 @@
 						"NORMAL":140,
 						"TEXCOORD_0":141
 					},
-					"indices":81
+					"indices":81,
+					"material":2
 				}
 			]
 		},
@@ -1544,6 +1577,10 @@
 		{
 			"sampler":0,
 			"source":7
+		},
+		{
+			"sampler":0,
+			"source":8
 		}
 	],
 	"images":[
@@ -1586,6 +1623,11 @@
 			"mimeType":"image/png",
 			"name":"details_metallicRoughness",
 			"uri":"details_metallicRoughness.png"
+		},
+		{
+			"mimeType":"image/jpeg",
+			"name":"boat-7054177_640",
+			"uri":"boat-7054177_640.jpg"
 		}
 	],
 	"accessors":[

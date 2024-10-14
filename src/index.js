@@ -22,7 +22,7 @@ const scene = new THREE.Scene();
 let model = null;
 let menuOpen = false;
 
-let currentModelId = Museum.ART_GALLERY;
+let currentMuseumId = Museum.ART_GALLERY;
 
 const STEPS_PER_FRAME = 5;
 let fpView;
@@ -155,7 +155,7 @@ function closeMenu(){
 
 
 function setMuseumModel(modelId){
-    currentModelId = modelId
+    currentMuseumId = modelId
     loadModel()
 }
 
@@ -166,13 +166,18 @@ function setMuseumModel(modelId){
  */
 function setImageToMesh(mesh, imgUrl) {
 
+    // const geometrySize = new THREE.Vector3()
+
+    // mesh.geometry.boundingBox.getSize(geometrySize)
+
     // const textureLoader = new THREE.TextureLoader();
     const { width, height } = getMeshSizeInPixels(mesh, camera, renderer)
 
     // const {width: w1, height: h1} = calculateProjectedDimensions(mesh.geometry, camera, renderer)
 
-    // console.log("Mesh: ", mesh, width / height,  w1 / h1)
+    // console.log("Mesh: ", mesh.name, width,  height,  geometrySize)
     const imageMaterial = createImageMaterial(imgUrl, width / height)
+    // const imageMaterial = createImageMaterial(imgUrl, geometrySize.z / geometrySize.x)
 
     mesh.material = imageMaterial;
 
@@ -204,21 +209,41 @@ document.body.addEventListener("uploadevent", (event) => {
 
 const loader = new GLTFLoader().setPath('/assets/');
 
+function clearSceneObjects(obj){
+    while(obj.children.length > 0){ 
+      clearSceneObjects(obj.children[0]);
+      obj.remove(obj.children[0]);
+    }
+    if(obj.geometry) obj.geometry.dispose();
+  
+    if(obj.material){ 
+      //in case of map, bumpMap, normalMap, envMap ...
+      Object.keys(obj.material).forEach(prop => {
+        if(!obj.material[prop])
+          return;
+        if(obj.material[prop] !== null && typeof obj.material[prop].dispose === 'function')                                  
+          obj.material[prop].dispose();                                                      
+      })
+      obj.material.dispose();
+    }
+  }   
+  
+
 
 function loadModel(){
 
     document.getElementById('loading-container').style.display = 'flex'; //open the loading progress
 
-    scene.remove.apply(scene, scene.children);
-
+    // scene.remove.apply(scene, scene.children);
+    clearSceneObjects(scene)
     const light = new THREE.AmbientLight("#fff", 5);
     scene.add(light);
     
-    loader.load(ModelPaths[currentModelId], (gltf) => {
+    loader.load(ModelPaths[currentMuseumId], (gltf) => {
 
         model = gltf
         scene.add(gltf.scene);
-    
+
         let count = 0;
         annotationMesh = {}
         gltf.scene.traverse((child) => {
@@ -284,7 +309,11 @@ function loadModel(){
     
                 annotationDiv.onAnnotationClick = ({ event, id }) => {
                     const { width, height } = getMeshSizeInPixels(child, camera, renderer)
-                    displayUploadModal(width / height, { img_id: child.name, museum: currentModelId })
+                    const geometrySize = new THREE.Vector3()
+                    child.geometry.boundingBox.getSize(geometrySize)
+
+                    displayUploadModal(width / height, { img_id: child.name, museum: currentMuseumId })
+                    // displayUploadModal(geometrySize.z / geometry.x, { img_id: child.name, museum: currentModelId })
                     // setCropAspectRatio()
                 }
     
@@ -323,7 +352,7 @@ function loadModel(){
         document.getElementById('loading-container').style.display = 'none'; //hide the loading progress
     
     
-        getMuseumList(currentModelId).then((data) => {
+        getMuseumList(currentMuseumId).then((data) => {
             console.log("museum data: ", data)
             data.data.forEach((data) => {
     

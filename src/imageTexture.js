@@ -1,7 +1,44 @@
 import * as THREE from 'three';
 
 
-function createImageMaterial(textureUrl, meshAspect = 1 / 1) {
+function adjustUVsToImage(geometry, texture) {
+	const imageWidth = texture.image.width
+	const imageHeight = texture.image.height
+	const aspectRatio = imageWidth / imageHeight
+
+	// Get the UV attribute array
+	const uvs = geometry.attributes.uv.array
+
+	// Modify UVs based on the aspect ratio
+	if (aspectRatio > 1) {
+		// Landscape image: stretch UVs horizontally
+		uvs[0] = 0           // Bottom-left
+		uvs[1] = 0
+		uvs[2] = 1           // Bottom-right
+		uvs[3] = 0
+		uvs[4] = 1           // Top-right
+		uvs[5] = aspectRatio  // Stretch vertically
+		uvs[6] = 0           // Top-left
+		uvs[7] = aspectRatio
+	} else {
+		// Portrait image: stretch UVs vertically
+		const scale = 1 / aspectRatio
+		uvs[0] = 0           // Bottom-left
+		uvs[1] = 0
+		uvs[2] = aspectRatio  // Bottom-right
+		uvs[3] = 0
+		uvs[4] = aspectRatio  // Top-right
+		uvs[5] = 1           // Stretch horizontally
+		uvs[6] = 0           // Top-left
+		uvs[7] = 1
+	}
+
+	// Mark UVs as needing update
+	geometry.attributes.uv.needsUpdate = true
+}
+
+
+function createImageMaterial(textureUrl, meshAspect = 1 / 1, geometry) {
 	const ImageMaterial = new THREE.ShaderMaterial({
 		uniforms: {
 			imageAspect: { value: 1 }, // Will be set based on the image dimensions
@@ -61,7 +98,13 @@ function createImageMaterial(textureUrl, meshAspect = 1 / 1) {
 
 		// ImageMaterial.uniforms.map.value = THREE.TextureUtils.cover(texture, meshAspect);
 
+		// texture.wrapS = THREE.RepeatWrapping;
+		// texture.wrapT = THREE.RepeatWrapping;
 
+		// adjustUVsToImage(geometry, texture)
+
+		texture.minFilter = THREE.LinearMipMapLinearFilter
+		texture.magFilter = THREE.LinearFilter
 
 		const imageAspect = texture.image.width / texture.image.height;
 		ImageMaterial.uniforms.imageAspect.value = imageAspect;
