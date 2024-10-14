@@ -1,26 +1,27 @@
 import * as THREE from 'three';
 
-function createImageMaterial(textureUrl) {
-    const ImageMaterial = new THREE.ShaderMaterial({
-        uniforms: {
-            scale: { value: new THREE.Vector2(1, 1) },
-            imageBounds: { value: new THREE.Vector2(1, 1) },
-            color: { value: new THREE.Color('white') },
-            map: { value: null },
-            grayscale: { value: 0 },
-            opacity: { value: 1 },
-        },
-        vertexShader: `
+
+function createImageMaterial(textureUrl, meshAspect = 1 / 1) {
+	const ImageMaterial = new THREE.ShaderMaterial({
+		uniforms: {
+			imageAspect: { value: 1 }, // Will be set based on the image dimensions
+			meshAspect: { value: 1 },  // Will be set based on the mesh's scale
+			color: { value: new THREE.Color('white') },
+			map: { value: null },
+			grayscale: { value: 0 },
+			opacity: { value: 1 },
+		},
+		vertexShader: `
           varying vec2 vUv;
           void main() {
             gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(position, 1.);
             vUv = uv;
           }
         `,
-        fragmentShader: `
+		fragmentShader: `
           varying vec2 vUv;
-          uniform vec2 scale;
-          uniform vec2 imageBounds;
+          uniform float imageAspect;
+          uniform float meshAspect;
           uniform vec3 color;
           uniform sampler2D map;
           uniform float grayscale;
@@ -32,39 +33,45 @@ function createImageMaterial(textureUrl) {
           }
 
           void main() {
-            // Get the aspect ratios of the scale and the image
-            float aspectScale = scale.x / scale.y;
-            float aspectImage = imageBounds.x / imageBounds.y;
-
-            // Determine the scale factor based on the aspect ratios
-            vec2 scaleFactor;
-            if (aspectScale > aspectImage) {
-                scaleFactor = vec2(aspectImage / aspectScale, 1.0); // Fit by height
+            // Adjust UV based on the aspect ratio of the image and the mesh
+            vec2 uv = vUv;
+            
+            if (meshAspect > imageAspect) {
+                uv.x = uv.x * imageAspect / meshAspect;
             } else {
-                scaleFactor = vec2(1.0, aspectScale / aspectImage); // Fit by width
+                uv.y = uv.y * meshAspect / imageAspect;
             }
 
-            // Scale the UVs based on the scaleFactor but do not center
-            vec2 uv = vUv * scaleFactor;
-
-            // Clamp the UVs to the range [0, 1] to keep the texture within bounds
+            // Clamp the UVs to ensure the image stays within bounds
             uv = clamp(uv, 0.0, 1.0);
-            
+
             // Get the texture color and apply grayscale and opacity
             gl_FragColor = toGrayscale(texture2D(map, uv) * vec4(color, opacity), grayscale);
           }
         `,
-    });
+	});
 
-    // Load the texture and set it for the material
-    const textureLoader = new THREE.TextureLoader();
-    textureLoader.load(textureUrl, function (texture) {
-        const imageBounds = new THREE.Vector2(texture.image.width, texture.image.height);
-        ImageMaterial.uniforms.imageBounds.value.copy(imageBounds);
-        ImageMaterial.uniforms.map.value = texture;
-    });
 
-    return ImageMaterial;
+	const textureLoader = new THREE.TextureLoader();
+	textureLoader.load(textureUrl, function (texture) {
+		// const imageBounds = new THREE.Vector2(texture.image.width, texture.image.height);
+		// ImageMaterial.uniforms.imageBounds.value.copy(imageBounds);
+		// ImageMaterial.uniforms.map.value = texture;
+		// cover(texture, meshAspect);
+
+		// ImageMaterial.uniforms.map.value = THREE.TextureUtils.cover(texture, meshAspect);
+
+
+
+		const imageAspect = texture.image.width / texture.image.height;
+		ImageMaterial.uniforms.imageAspect.value = imageAspect;
+		ImageMaterial.uniforms.map.value = texture;
+
+		// // Compute mesh aspect ratio based on its world scale or geometry
+		ImageMaterial.uniforms.meshAspect.value = meshAspect;
+	});
+
+	return ImageMaterial;
 }
 
 export default createImageMaterial;

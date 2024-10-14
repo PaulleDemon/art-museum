@@ -99,26 +99,26 @@ export function initUploadModal() {
         uploadSubmit.disabled = true;
 
 
-        const {img_id, museum} = uploadProperties;
+        const { img_id, museum } = uploadProperties;
 
-        uploadItem(file, uploadTitle.value, uploadDescription.value, uploadHandle.value, null, img_id, museum).then((res) =>{
+        uploadItem(file, uploadTitle.value, uploadDescription.value, uploadHandle.value, null, img_id, museum).then((res) => {
             uploadSpinner.style.display = 'none';
             uploadSubmit.disabled = false;
-            
+
 
             const uploadEvent = new CustomEvent("uploadevent", {
-                                        detail:{
-                                                    ...uploadProperties, 
-                                                    title: uploadTitle.value,
-                                                    description: uploadDescription.value,
-                                                    name: uploadHandle.value,
-                                                    img_url: URL.createObjectURL(file)
-                                                }
-                                            });
+                detail: {
+                    ...uploadProperties,
+                    title: uploadTitle.value,
+                    description: uploadDescription.value,
+                    name: uploadHandle.value,
+                    img_url: URL.createObjectURL(file)
+                }
+            });
 
             document.body.dispatchEvent(uploadEvent)
 
-            if (res.success){
+            if (res.success) {
                 closeUploadModal()
 
             }
@@ -127,7 +127,7 @@ export function initUploadModal() {
         }).catch((error) => {
             console.log("error 2: ", error.message)
             toastMessage(`${error.message}`)
-            
+
             uploadSpinner.style.display = 'none';
             uploadSubmit.disabled = false;
         })
@@ -210,7 +210,7 @@ function handleFile(file) {
 
             cropper = new Cropper(cropPreview, {
                 aspectRatio: cropAspectRatio,
-                rotatable:true,
+                rotatable: true,
                 crop(event) {
                 },
             });
@@ -229,38 +229,79 @@ function handleFile(file) {
 export function getMeshSizeInPixels(mesh, camera, renderer) {
     const vector = new THREE.Vector3();
 
-    // Compute the bounding box of the mesh
-    const boundingBox = new THREE.Box3().setFromObject(mesh);
+    const box = new THREE.Box3().setFromObject(mesh);
+    const size = new THREE.Vector3();
+    box.getSize(size);
 
-    // Get the eight corners of the bounding box
-    const vertices = [
-        new THREE.Vector3(boundingBox.min.x, boundingBox.min.y, boundingBox.min.z), // Bottom-left-back
-        new THREE.Vector3(boundingBox.min.x, boundingBox.min.y, boundingBox.max.z), // Bottom-left-front
-        new THREE.Vector3(boundingBox.min.x, boundingBox.max.y, boundingBox.min.z), // Top-left-back
-        new THREE.Vector3(boundingBox.min.x, boundingBox.max.y, boundingBox.max.z), // Top-left-front
-        new THREE.Vector3(boundingBox.max.x, boundingBox.min.y, boundingBox.min.z), // Bottom-right-back
-        new THREE.Vector3(boundingBox.max.x, boundingBox.min.y, boundingBox.max.z), // Bottom-right-front
-        new THREE.Vector3(boundingBox.max.x, boundingBox.max.y, boundingBox.min.z), // Top-right-back
-        new THREE.Vector3(boundingBox.max.x, boundingBox.max.y, boundingBox.max.z)  // Top-right-front
+    const corners = [
+        new THREE.Vector3(box.min.x, box.min.y, box.min.z),
+        new THREE.Vector3(box.min.x, box.min.y, box.max.z),
+        new THREE.Vector3(box.min.x, box.max.y, box.min.z),
+        new THREE.Vector3(box.min.x, box.max.y, box.max.z),
+        new THREE.Vector3(box.max.x, box.min.y, box.min.z),
+        new THREE.Vector3(box.max.x, box.min.y, box.max.z),
+        new THREE.Vector3(box.max.x, box.max.y, box.min.z),
+        new THREE.Vector3(box.max.x, box.max.y, box.max.z)
     ];
 
-    // Project the bounding box corners to screen space
-    const screenCoordinates = vertices.map(vertex => {
-        vector.copy(vertex).project(camera);
-        return {
-            x: (vector.x + 1) * renderer.domElement.clientWidth / 2,
-            y: (-vector.y + 1) * renderer.domElement.clientHeight / 2
-        };
+    const min = new THREE.Vector2(Infinity, Infinity);
+    const max = new THREE.Vector2(-Infinity, -Infinity);
+
+    // Project each corner to screen space and find the min/max x and y coordinates
+    corners.forEach(corner => {
+        vector.copy(corner).project(camera);
+
+        // Convert the normalized coordinates (-1 to 1) to pixel coordinates
+        const x = (vector.x * 0.5 + 0.5) * renderer.domElement.clientWidth;
+        const y = (vector.y * -0.5 + 0.5) * renderer.domElement.clientHeight;
+
+        min.x = Math.min(min.x, x);
+        min.y = Math.min(min.y, y);
+        max.x = Math.max(max.x, x);
+        max.y = Math.max(max.y, y);
     });
 
-    // Find the min and max screen coordinates to get the width and height in pixels
-    const minX = Math.min(...screenCoordinates.map(coord => coord.x));
-    const maxX = Math.max(...screenCoordinates.map(coord => coord.x));
-    const minY = Math.min(...screenCoordinates.map(coord => coord.y));
-    const maxY = Math.max(...screenCoordinates.map(coord => coord.y));
-
-    const width = maxX - minX;
-    const height = maxY - minY;
+    const width = max.x - min.x;
+    const height = max.y - min.y;
 
     return { width, height };
 }
+
+
+export function calculateProjectedDimensions(geometry, camera, renderer) {
+    const positionArray = geometry.getAttribute('position').array;
+    
+    // Variables to store the projected min and max values
+    let minX = Infinity, maxX = -Infinity;
+    let minY = Infinity, maxY = -Infinity;
+  
+    // Create a vector to hold the 3D position of each vertex
+    const vertex = new THREE.Vector3();
+  
+    // Loop through each vertex and project it to 2D screen space
+    for (let i = 0; i < positionArray.length; i += 3) {
+      vertex.set(positionArray[i], positionArray[i + 1], positionArray[i + 2]);
+      
+      // Project the vertex to normalized device coordinates (NDC)
+      vertex.project(camera);
+  
+      // Convert NDC to screen coordinates
+      const halfWidth = renderer.domElement.clientWidth / 2;
+      const halfHeight = renderer.domElement.clientHeight / 2;
+  
+      const screenX = (vertex.x * halfWidth) + halfWidth;
+      const screenY = -(vertex.y * halfHeight) + halfHeight;  // Invert Y-axis
+  
+      // Update min and max values for width and height
+      minX = Math.min(minX, screenX);
+      maxX = Math.max(maxX, screenX);
+      minY = Math.min(minY, screenY);
+      maxY = Math.max(maxY, screenY);
+    }
+  
+    // Calculate the projected width and height
+    const projectedWidth = maxX - minX;
+    const projectedHeight = maxY - minY;
+  
+    return { width: projectedWidth, height: projectedHeight };
+  }

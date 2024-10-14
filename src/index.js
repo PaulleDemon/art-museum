@@ -11,7 +11,7 @@ import { CSS2DRenderer, CSS2DObject } from 'three/addons/renderers/CSS2DRenderer
 import FirstPersonPlayer from './control';
 import AnnotationDiv from "./annotationDiv";
 
-import { closeUploadModal, displayUploadModal, getMeshSizeInPixels, initUploadModal, setCropAspectRatio } from "./utils";
+import {  displayUploadModal, getMeshSizeInPixels, initUploadModal } from "./utils";
 import { getMuseumList } from "./services";
 import { Museum } from "./constants";
 import createImageMaterial from "./imageTexture";
@@ -102,8 +102,13 @@ container.addEventListener("keyup", (e) => {
  */
 function setImageToMesh(mesh, imgUrl){
 
-    const textureLoader = new THREE.TextureLoader();
-    const imageMaterial = createImageMaterial(imgUrl)
+    // const textureLoader = new THREE.TextureLoader();
+    const {width, height} = getMeshSizeInPixels(mesh, camera, renderer)
+
+    // const {width: w1, height: h1} = calculateProjectedDimensions(mesh.geometry, camera, renderer)
+
+    // console.log("Mesh: ", mesh, width / height,  w1 / h1)
+    const imageMaterial = createImageMaterial(imgUrl, width / height)
 
     mesh.material = imageMaterial;
      
